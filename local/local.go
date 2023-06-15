@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/pkg6/go-flysystem"
+	"io"
 	"net/http"
 	"os"
 	"path"
@@ -49,7 +50,6 @@ func (f *Local) Exists(path string) (bool, error) {
 	}
 	return false, err
 }
-
 func (f *Local) Write(path string, contents []byte) (string, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
@@ -65,6 +65,29 @@ func (f *Local) Write(path string, contents []byte) (string, error) {
 		return "", err
 	}
 	return path, nil
+}
+
+func (f *Local) WriteReader(path string, reader io.Reader) (string, error) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
+	path = f.ApplyPathPrefix(path)
+	dir, err := filepath.Abs(filepath.Dir(path))
+	if err != nil {
+		return "", err
+	}
+	if err = f.ensureDirectory(dir); err != nil {
+		return "", err
+	}
+	file, err := os.Create(path)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+	_, err = io.Copy(file, reader)
+	if err != nil {
+		return "", err
+	}
+	return file.Name(), nil
 }
 
 func (f *Local) WriteStream(path, resource string) (string, error) {
