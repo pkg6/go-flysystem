@@ -61,8 +61,7 @@ func (f FsOss) Exists(path string) (bool, error) {
 	}
 	return bucket.IsObjectExist(path)
 }
-
-func (f FsOss) Write(path string, contents []byte) (string, error) {
+func (f FsOss) WriteReader(path string, reader io.Reader) (string, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 	path = f.ApplyPathPrefix(path)
@@ -70,11 +69,16 @@ func (f FsOss) Write(path string, contents []byte) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if err = bucket.PutObject(path, bytes.NewReader(contents)); err != nil {
+	if err = bucket.PutObject(path, reader); err != nil {
 		return "", err
 	}
 	return path, nil
 }
+
+func (f FsOss) Write(path string, contents []byte) (string, error) {
+	return f.WriteReader(path, bytes.NewReader(contents))
+}
+
 func (f FsOss) WriteStream(path, resource string) (string, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()

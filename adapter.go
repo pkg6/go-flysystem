@@ -2,6 +2,7 @@ package flysystem
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"strings"
 )
@@ -35,7 +36,9 @@ type IFS interface {
 	Exists(path string) (bool, error)
 	// Size Get File Size
 	Size(path string) (int64, error)
-	// Write write file content and return full path
+	// WriteReader write file content and return full path
+	WriteReader(path string, reader io.Reader) (string, error)
+	// Write  file content and return full path
 	Write(path string, contents []byte) (string, error)
 	// WriteStream Resource file write returns full path
 	WriteStream(path, resource string) (string, error)

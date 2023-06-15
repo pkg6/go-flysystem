@@ -32,6 +32,7 @@ import (
 	"github.com/pkg6/go-flysystem"
 	"github.com/pkg6/go-flysystem/fsoss"
 	"github.com/pkg6/go-flysystem/local"
+	"strings"
 )
 
 func main() {
@@ -50,6 +51,8 @@ func main() {
 	adapters := flysystem.NewAdapters(localAdapter)
 	adapters.Extend(ossAdapter.DiskName(), ossAdapter)
 	var err error
+	_, err = adapters.WriteReader("4.txt", strings.NewReader("test"))
+	fmt.Println(err)
 	//Write file
 	_, err = adapters.Write("1.txt", []byte("test data"))
 	fmt.Println(err)
@@ -87,13 +90,6 @@ func main() {
 	fmt.Println(err)
 	//Delete directory
 	_, err = adapters.DeleteDirectory("test1/test12")
-	fmt.Println(err)
-	//List directory
-	contents, _ := adapters.ListContents("", 0)
-	for _, content := range contents {
-		fmt.Println(content.Path)
-		fmt.Println(content.Size)
-	}
 	fmt.Println(err)
 }
 ~~~

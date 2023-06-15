@@ -2,6 +2,7 @@ package flysystem
 
 import (
 	"fmt"
+	"io"
 )
 
 type Flysystem struct {
@@ -52,6 +53,9 @@ func (f *Flysystem) FindAdapter() IAdapter {
 }
 func (f *Flysystem) Exists(path string) (bool, error) {
 	return f.FindAdapter().Exists(path)
+}
+func (f *Flysystem) WriteReader(path string, reader io.Reader) (string, error) {
+	return f.FindAdapter().WriteReader(path, reader)
 }
 func (f *Flysystem) Write(path string, contents []byte) (string, error) {
 	return f.FindAdapter().Write(path, contents)
