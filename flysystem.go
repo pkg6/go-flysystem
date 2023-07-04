@@ -3,16 +3,21 @@ package flysystem
 import (
 	"fmt"
 	"io"
+	"sync"
 )
 
 type Flysystem struct {
 	disk         string
 	diskAdapters map[string]IAdapter
 	diskNames    []string
+	l            *sync.Mutex
 }
 
 func New() IFlysystem {
-	return &Flysystem{diskAdapters: make(map[string]IAdapter)}
+	return &Flysystem{
+		diskAdapters: make(map[string]IAdapter),
+		l:            &sync.Mutex{},
+	}
 }
 
 func NewAdapters(adapters ...IAdapter) IFlysystem {
@@ -25,6 +30,8 @@ func NewAdapters(adapters ...IAdapter) IFlysystem {
 
 // Extend 扩展
 func (f *Flysystem) Extend(name string, adapter IAdapter) IFlysystem {
+	f.l.Lock()
+	defer f.l.Unlock()
 	f.diskAdapters[name] = adapter
 	f.diskNames = append(f.diskNames, name)
 	return f
@@ -40,6 +47,8 @@ func (f *Flysystem) Disk(disk string) IFlysystem {
 
 // FindAdapter Find Adapter
 func (f *Flysystem) FindAdapter() IAdapter {
+	f.l.Lock()
+	defer f.l.Unlock()
 	var disk string
 	if f.disk != "" {
 		disk = f.disk

@@ -19,7 +19,7 @@ $ go get github.com/pkg6/go-flysystem
 
 ## Officially supported adapters
 
-- **[Local](https://github.com/pkg6/go-flysystem/blob/main/local/)**
+- **[Local](https://github.com/pkg6/go-flysystem/tree/main/local)**
 - **[OSS](https://help.aliyun.com/product/31815.html)**
 
 ## example
@@ -99,42 +99,3 @@ func main() {
 
 
 You can always [create an adapter](https://github.com/pkg6/go-flysystem/blob/main/adapter.go) yourself.
-
-~~~
-type IFS interface {
-	// Exists Determine if the file exists
-	Exists(path string) (bool, error)
-	// Size Get File Size
-	Size(path string) (int64, error)
-	// Write write file content and return full path
-	Write(path string, contents []byte) (string, error)
-	// WriteStream Resource file write returns full path
-	WriteStream(path, resource string) (string, error)
-	// Update Update the file content and return the updated full path
-	Update(path string, contents []byte) (string, error)
-	// UpdateStream Return the updated full path based on resource file updates
-	UpdateStream(path, resource string) (string, error)
-	// Read Read file
-	Read(path string) ([]byte, error)
-	// Delete  Deleting files returns the number of deleted files
-	Delete(path string) (int64, error)
-	// DeleteDirectory Number of files deleted from the deleted directory
-	DeleteDirectory(dirname string) (int64, error)
-	// CreateDirectory create directory
-	CreateDirectory(dirname string) error
-	// MimeType Get File MimeType
-	MimeType(path string) (string, error)
-	// Move move file
-	Move(source, destination string) (bool, error)
-	// Copy copy file
-	Copy(source, destination string) (bool, error)
-}
-type IAdapter interface {
-	IFS
-	// DiskName Default Disk Name
-	DiskName() string
-	// Clone Initialization parameters
-	Clone() IAdapter
-}
-~~~
-
