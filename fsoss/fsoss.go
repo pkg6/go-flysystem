@@ -10,6 +10,10 @@ import (
 	"sync"
 )
 
+var (
+	DefaultEndpoint = "oss-cn-hangzhou.aliyuncs.com"
+)
+
 type Config struct {
 	Bucket          string `json:"bucket"`
 	Endpoint        string `json:"endpoint"`
@@ -29,13 +33,14 @@ func New(config Config) flysystem.IAdapter {
 	return FsOss{Config: config}.Clone()
 }
 
-func (f FsOss) DiskName() string {
-	return "oss"
+func (f *FsOss) DiskName() string {
+	return flysystem.DiskNameOSS
 }
+
 func (f FsOss) Clone() flysystem.IAdapter {
 	var err error
 	if f.Config.Endpoint == "" {
-		f.Config.Endpoint = "oss-cn-hangzhou.aliyuncs.com"
+		f.Config.Endpoint = DefaultEndpoint
 	}
 	if f.Config.PathPrefix != "" {
 		f.SetPathPrefix(f.Config.PathPrefix)
@@ -51,7 +56,8 @@ func (f FsOss) Clone() flysystem.IAdapter {
 	}
 	return &f
 }
-func (f FsOss) Exists(path string) (bool, error) {
+
+func (f *FsOss) Exists(path string) (bool, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 	path = f.ApplyPathPrefix(path)
@@ -61,7 +67,7 @@ func (f FsOss) Exists(path string) (bool, error) {
 	}
 	return bucket.IsObjectExist(path)
 }
-func (f FsOss) WriteReader(path string, reader io.Reader) (string, error) {
+func (f *FsOss) WriteReader(path string, reader io.Reader) (string, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 	path = f.ApplyPathPrefix(path)
@@ -75,11 +81,11 @@ func (f FsOss) WriteReader(path string, reader io.Reader) (string, error) {
 	return path, nil
 }
 
-func (f FsOss) Write(path string, contents []byte) (string, error) {
+func (f *FsOss) Write(path string, contents []byte) (string, error) {
 	return f.WriteReader(path, bytes.NewReader(contents))
 }
 
-func (f FsOss) WriteStream(path, resource string) (string, error) {
+func (f *FsOss) WriteStream(path, resource string) (string, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 	path = f.ApplyPathPrefix(path)
@@ -92,14 +98,14 @@ func (f FsOss) WriteStream(path, resource string) (string, error) {
 	}
 	return path, nil
 }
-func (f FsOss) Update(path string, contents []byte) (string, error) {
+func (f *FsOss) Update(path string, contents []byte) (string, error) {
 	return f.Write(path, contents)
 }
 
-func (f FsOss) UpdateStream(path, resource string) (string, error) {
+func (f *FsOss) UpdateStream(path, resource string) (string, error) {
 	return f.WriteStream(path, resource)
 }
-func (f FsOss) Read(path string) ([]byte, error) {
+func (f *FsOss) Read(path string) ([]byte, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 	path = f.ApplyPathPrefix(path)
@@ -119,7 +125,7 @@ func (f FsOss) Read(path string) ([]byte, error) {
 	return contents, err
 }
 
-func (f FsOss) Delete(path string) (int64, error) {
+func (f *FsOss) Delete(path string) (int64, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 	path = f.ApplyPathPrefix(path)
@@ -133,7 +139,7 @@ func (f FsOss) Delete(path string) (int64, error) {
 	return 1, nil
 }
 
-func (f FsOss) DeleteDirectory(dirname string) (int64, error) {
+func (f *FsOss) DeleteDirectory(dirname string) (int64, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 	dirname = f.ApplyPathPrefix(dirname)
@@ -169,14 +175,14 @@ func (f FsOss) DeleteDirectory(dirname string) (int64, error) {
 	}
 	return count, nil
 }
-func (f FsOss) CreateDirectory(dirname string) error {
+func (f *FsOss) CreateDirectory(dirname string) error {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 	_, err := f.Write(dirname, []byte(""))
 	return err
 }
 
-func (f FsOss) MimeType(path string) (string, error) {
+func (f *FsOss) MimeType(path string) (string, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 	meta, err := f.getObjectMeta(path)
@@ -186,7 +192,7 @@ func (f FsOss) MimeType(path string) (string, error) {
 	return meta.Get("content-type"), nil
 }
 
-func (f FsOss) Size(path string) (int64, error) {
+func (f *FsOss) Size(path string) (int64, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 	meta, err := f.getObjectMeta(path)
@@ -199,14 +205,15 @@ func (f FsOss) Size(path string) (int64, error) {
 	}
 	return i, nil
 }
-func (f FsOss) Move(source, destination string) (bool, error) {
+func (f *FsOss) Move(source, destination string) (bool, error) {
 	return f.copyObject(source, destination, true)
 }
 
-func (f FsOss) Copy(source, destination string) (bool, error) {
+func (f *FsOss) Copy(source, destination string) (bool, error) {
 	return f.copyObject(source, destination, false)
 }
-func (f FsOss) copyObject(srcObjectKey, destObjectKey string, isDelete bool) (bool, error) {
+
+func (f *FsOss) copyObject(srcObjectKey, destObjectKey string, isDelete bool) (bool, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 	srcObjectKey = f.ApplyPathPrefix(srcObjectKey)
@@ -224,8 +231,7 @@ func (f FsOss) copyObject(srcObjectKey, destObjectKey string, isDelete bool) (bo
 	}
 	return true, nil
 }
-
-func (f FsOss) getObjectMeta(path string) (header http.Header, err error) {
+func (f *FsOss) getObjectMeta(path string) (header http.Header, err error) {
 	path = f.ApplyPathPrefix(path)
 	bucket, err := f.Oss.Bucket(f.Config.Bucket)
 	if err != nil {
