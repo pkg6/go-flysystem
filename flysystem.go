@@ -3,8 +3,78 @@ package flysystem
 import (
 	"fmt"
 	"io"
+	"os"
 	"sync"
 )
+
+const (
+	DiskNameOSS   = "oss"
+	DiskNameLocal = "local"
+
+	PathTypeFile      = "file"
+	PathTypeDirectory = "directory"
+	ModePublicString  = "public"
+	ModePrivateString = "private"
+	ModeFilePublic    = 0644
+	ModeFilePrivate   = 0600
+	ModeDirPublic     = 0755
+	ModeDirPrivate    = 0700
+)
+
+var (
+	FileModes = map[string]map[string]os.FileMode{
+		PathTypeFile: {
+			ModePublicString:  ModeFilePublic,
+			ModePrivateString: ModeFilePrivate,
+		},
+		PathTypeDirectory: {
+			ModePublicString:  ModeDirPublic,
+			ModePrivateString: ModeDirPrivate,
+		},
+	}
+)
+
+type BaseIFS interface {
+	// Exists Determine if the file exists
+	Exists(path string) (bool, error)
+	// WriteReader write file content and return full path
+	WriteReader(path string, reader io.Reader) (string, error)
+	// Write  file content and return full path
+	Write(path string, contents []byte) (string, error)
+	// WriteStream Resource file write returns full path
+	WriteStream(path, resource string) (string, error)
+	// Read Read file
+	Read(path string) ([]byte, error)
+	// Delete  Deleting files returns the number of deleted files
+	Delete(path string) (int64, error)
+}
+
+type IFS interface {
+	BaseIFS
+	// Size Get File Size
+	Size(path string) (int64, error)
+	// Update  the file content and return the updated full path
+	Update(path string, contents []byte) (string, error)
+	// UpdateStream Return the updated full path based on resource file updates
+	UpdateStream(path, resource string) (string, error)
+	// DeleteDirectory Number of files deleted from the deleted directory
+	DeleteDirectory(dirname string) (int64, error)
+	// CreateDirectory create directory
+	CreateDirectory(dirname string) error
+	// MimeType Get File MimeType
+	MimeType(path string) (string, error)
+	// Move move file
+	Move(source, destination string) (bool, error)
+	// Copy copy file
+	Copy(source, destination string) (bool, error)
+}
+
+type IFlysystem interface {
+	IFS
+	Extend(adapter IAdapter, names ...string) IFlysystem
+	Disk(disk string) IFlysystem
+	FindAdapter() IAdapter
+}
 
 type Flysystem struct {
 	disk         string
@@ -23,15 +93,19 @@ func New() IFlysystem {
 func NewAdapters(adapters ...IAdapter) IFlysystem {
 	f := New()
 	for _, adapter := range adapters {
-		f.Extend(adapter.DiskName(), adapter)
+		f.Extend(adapter)
 	}
 	return f
 }
 
 // Extend 扩展
-func (f *Flysystem) Extend(name string, adapter IAdapter) IFlysystem {
+func (f *Flysystem) Extend(adapter IAdapter, names ...string) IFlysystem {
 	f.l.Lock()
 	defer f.l.Unlock()
+	name := adapter.DiskName()
+	if len(names) > 0 {
+		name = names[0]
+	}
 	f.diskAdapters[name] = adapter
 	f.diskNames = append(f.diskNames, name)
 	return f

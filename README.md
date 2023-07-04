@@ -49,7 +49,7 @@ func main() {
 	})
 	//Initialize the adapter
 	adapters := flysystem.NewAdapters(localAdapter)
-	adapters.Extend(ossAdapter.DiskName(), ossAdapter)
+	adapters.Extend(ossAdapter)
 	var err error
 	_, err = adapters.WriteReader("4.txt", strings.NewReader("test"))
 	fmt.Println(err)
@@ -95,7 +95,5 @@ func main() {
 ~~~
 
 > If Disk is not specified, it will be executed using the first registered driver
-
-
 
 You can always [create an adapter](https://github.com/pkg6/go-flysystem/blob/main/adapter.go) yourself.
