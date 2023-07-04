@@ -26,7 +26,7 @@ func (a *AbstractAdapter) SetPathPrefix(prefix string) {
 
 func (a *AbstractAdapter) ApplyPathPrefix(path string) string {
 	if a.prefix == "" {
-		return fmt.Sprintf("%s", strings.TrimPrefix(path, string(os.PathSeparator)))
+		return strings.TrimPrefix(path, string(os.PathSeparator))
 	}
 	return fmt.Sprintf("%s%s", a.prefix, strings.TrimPrefix(path, string(os.PathSeparator)))
 }

@@ -223,7 +223,6 @@ func TestFlysystem_Extend(t *testing.T) {
 		diskNames    []string
 	}
 	type args struct {
-		name    string
 		adapter IAdapter
 	}
 	tests := []struct {
@@ -241,7 +240,7 @@ func TestFlysystem_Extend(t *testing.T) {
 				diskAdapters: tt.fields.diskAdapters,
 				diskNames:    tt.fields.diskNames,
 			}
-			if got := f.Extend(tt.args.name, tt.args.adapter); !reflect.DeepEqual(got, tt.want) {
+			if got := f.Extend(tt.args.adapter); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Extend() = %v, want %v", got, tt.want)
 			}
 		})

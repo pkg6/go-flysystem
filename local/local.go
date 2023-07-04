@@ -277,7 +277,7 @@ func (f *Local) ensureDirectory(root string) error {
 	var err error
 	if _, err = os.Stat(root); os.IsNotExist(err) {
 		if err = os.MkdirAll(root, flysystem.ModeDirPublic); err != nil {
-			return errors.New(fmt.Sprintf("impossible to create directory %s err=%s", root, err.Error()))
+			return fmt.Errorf("impossible to create directory %s err=%s", root, err.Error())
 		}
 	}
 	return err
