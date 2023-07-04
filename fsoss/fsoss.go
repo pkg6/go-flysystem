@@ -227,7 +227,7 @@ func (f *FsOss) copyObject(srcObjectKey, destObjectKey string, isDelete bool) (b
 		return false, err
 	}
 	if isDelete {
-		err = bucket.DeleteObject(srcObjectKey)
+		_ = bucket.DeleteObject(srcObjectKey)
 	}
 	return true, nil
 }

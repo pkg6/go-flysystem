@@ -134,45 +134,59 @@ func (f *Flysystem) FindAdapter() IAdapter {
 	}
 	panic(fmt.Sprintf("Unable to find %s disk", disk))
 }
+
 func (f *Flysystem) Exists(path string) (bool, error) {
 	return f.FindAdapter().Exists(path)
 }
+
 func (f *Flysystem) WriteReader(path string, reader io.Reader) (string, error) {
 	return f.FindAdapter().WriteReader(path, reader)
 }
+
 func (f *Flysystem) Write(path string, contents []byte) (string, error) {
 	return f.FindAdapter().Write(path, contents)
 }
+
 func (f *Flysystem) WriteStream(path, resource string) (string, error) {
 	return f.FindAdapter().WriteStream(path, resource)
 }
+
 func (f *Flysystem) Update(path string, contents []byte) (string, error) {
 	return f.FindAdapter().Update(path, contents)
 }
+
 func (f *Flysystem) UpdateStream(path, resource string) (string, error) {
 	return f.FindAdapter().UpdateStream(path, resource)
 }
+
 func (f *Flysystem) Read(path string) ([]byte, error) {
 	return f.FindAdapter().Read(path)
 }
+
 func (f *Flysystem) Delete(path string) (int64, error) {
 	return f.FindAdapter().Delete(path)
 }
+
 func (f *Flysystem) CreateDirectory(dirname string) error {
 	return f.FindAdapter().CreateDirectory(dirname)
 }
+
 func (f *Flysystem) DeleteDirectory(dirname string) (int64, error) {
 	return f.FindAdapter().DeleteDirectory(dirname)
 }
+
 func (f *Flysystem) MimeType(path string) (string, error) {
 	return f.FindAdapter().MimeType(path)
 }
+
 func (f *Flysystem) Size(path string) (int64, error) {
 	return f.FindAdapter().Size(path)
 }
+
 func (f *Flysystem) Move(source, destination string) (bool, error) {
 	return f.FindAdapter().Move(source, destination)
 }
+
 func (f *Flysystem) Copy(source, destination string) (bool, error) {
 	return f.FindAdapter().Copy(source, destination)
 }
