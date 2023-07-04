@@ -24,7 +24,7 @@ func New(root string) flysystem.IAdapter {
 }
 
 func (f Local) DiskName() string {
-	return "local"
+	return flysystem.DiskNameLocal
 }
 
 func (f Local) Clone() flysystem.IAdapter {

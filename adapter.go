@@ -16,6 +16,9 @@ const (
 	ModeFilePrivate   = 0600
 	ModeDirPublic     = 0755
 	ModeDirPrivate    = 0700
+
+	DiskNameOSS   = "oss"
+	DiskNameLocal = "local"
 )
 
 var (
@@ -31,25 +34,29 @@ var (
 	}
 )
 
-type IFS interface {
+type BaseIFS interface {
 	// Exists Determine if the file exists
 	Exists(path string) (bool, error)
-	// Size Get File Size
-	Size(path string) (int64, error)
 	// WriteReader write file content and return full path
 	WriteReader(path string, reader io.Reader) (string, error)
 	// Write  file content and return full path
 	Write(path string, contents []byte) (string, error)
 	// WriteStream Resource file write returns full path
 	WriteStream(path, resource string) (string, error)
-	// Update Update the file content and return the updated full path
-	Update(path string, contents []byte) (string, error)
-	// UpdateStream Return the updated full path based on resource file updates
-	UpdateStream(path, resource string) (string, error)
 	// Read Read file
 	Read(path string) ([]byte, error)
 	// Delete  Deleting files returns the number of deleted files
 	Delete(path string) (int64, error)
+}
+
+type IFS interface {
+	BaseIFS
+	// Size Get File Size
+	Size(path string) (int64, error)
+	// Update Update the file content and return the updated full path
+	Update(path string, contents []byte) (string, error)
+	// UpdateStream Return the updated full path based on resource file updates
+	UpdateStream(path, resource string) (string, error)
 	// DeleteDirectory Number of files deleted from the deleted directory
 	DeleteDirectory(dirname string) (int64, error)
 	// CreateDirectory create directory
@@ -75,11 +82,6 @@ type IAdapter interface {
 	DiskName() string
 	// Clone Initialization parameters
 	Clone() IAdapter
-}
-
-type Path struct {
-	Path string
-	Size int64
 }
 
 type AbstractAdapter struct {
