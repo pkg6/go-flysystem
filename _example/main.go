@@ -22,7 +22,7 @@ func main() {
 	})
 	//Initialize the adapter
 	adapters := flysystem.NewAdapters(localAdapter)
-	adapters.Extend(ossAdapter.DiskName(), ossAdapter)
+	adapters.Extend(ossAdapter)
 	var err error
 	_, err = adapters.WriteReader("4.txt", strings.NewReader("test"))
 	fmt.Println(err)
