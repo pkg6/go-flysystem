@@ -23,8 +23,11 @@ func main() {
 	//Initialize the adapter
 	adapters := flysystem.NewAdapters(localAdapter)
 	adapters.Extend(ossAdapter)
+	adapters.Extend(local.New("./_example/test_data/2"), "local2")
 	var err error
 	_, err = adapters.WriteReader("4.txt", strings.NewReader("test"))
+	fmt.Println(err)
+	_, err = adapters.Disk("local2").WriteReader("4.txt", strings.NewReader("test"))
 	fmt.Println(err)
 	//Write file
 	_, err = adapters.Write("1.txt", []byte("test data"))
