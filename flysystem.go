@@ -34,7 +34,7 @@ var (
 	}
 )
 
-type BaseIFS interface {
+type IBFS interface {
 	// Exists Determine if the file exists
 	Exists(path string) (bool, error)
 	// WriteReader write file content and return full path
@@ -50,7 +50,7 @@ type BaseIFS interface {
 }
 
 type IFS interface {
-	BaseIFS
+	IBFS
 	// Size Get File Size
 	Size(path string) (int64, error)
 	// Update  the file content and return the updated full path
@@ -121,8 +121,6 @@ func (f *Flysystem) Disk(disk string) IFlysystem {
 
 // FindAdapter Find Adapter
 func (f *Flysystem) FindAdapter() IAdapter {
-	f.l.Lock()
-	defer f.l.Unlock()
 	var disk string
 	if f.disk != "" {
 		disk = f.disk
