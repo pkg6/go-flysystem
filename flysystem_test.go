@@ -1,7 +1,9 @@
 package flysystem
 
 import (
+	"io"
 	"reflect"
+	"sync"
 	"testing"
 )
 
@@ -9,7 +11,7 @@ func TestFlysystem_Copy(t *testing.T) {
 	type fields struct {
 		disk         string
 		diskAdapters map[string]IAdapter
-		diskNames    []string
+		l            *sync.Mutex
 	}
 	type args struct {
 		source      string
@@ -29,7 +31,7 @@ func TestFlysystem_Copy(t *testing.T) {
 			f := &Flysystem{
 				disk:         tt.fields.disk,
 				diskAdapters: tt.fields.diskAdapters,
-				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
 			}
 			got, err := f.Copy(tt.args.source, tt.args.destination)
 			if (err != nil) != tt.wantErr {
@@ -43,42 +45,11 @@ func TestFlysystem_Copy(t *testing.T) {
 	}
 }
 
-func TestFlysystem_CreateDirectory(t *testing.T) {
-	type fields struct {
-		disk         string
-		diskAdapters map[string]IAdapter
-		diskNames    []string
-	}
-	type args struct {
-		dirname string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			f := &Flysystem{
-				disk:         tt.fields.disk,
-				diskAdapters: tt.fields.diskAdapters,
-				diskNames:    tt.fields.diskNames,
-			}
-			if err := f.CreateDirectory(tt.args.dirname); (err != nil) != tt.wantErr {
-				t.Errorf("CreateDirectory() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
 func TestFlysystem_Delete(t *testing.T) {
 	type fields struct {
 		disk         string
 		diskAdapters map[string]IAdapter
-		diskNames    []string
+		l            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -97,7 +68,7 @@ func TestFlysystem_Delete(t *testing.T) {
 			f := &Flysystem{
 				disk:         tt.fields.disk,
 				diskAdapters: tt.fields.diskAdapters,
-				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
 			}
 			got, err := f.Delete(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -111,48 +82,11 @@ func TestFlysystem_Delete(t *testing.T) {
 	}
 }
 
-func TestFlysystem_DeleteDirectory(t *testing.T) {
-	type fields struct {
-		disk         string
-		diskAdapters map[string]IAdapter
-		diskNames    []string
-	}
-	type args struct {
-		dirname string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    int64
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			f := &Flysystem{
-				disk:         tt.fields.disk,
-				diskAdapters: tt.fields.diskAdapters,
-				diskNames:    tt.fields.diskNames,
-			}
-			got, err := f.DeleteDirectory(tt.args.dirname)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("DeleteDirectory() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("DeleteDirectory() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestFlysystem_Disk(t *testing.T) {
 	type fields struct {
 		disk         string
 		diskAdapters map[string]IAdapter
-		diskNames    []string
+		l            *sync.Mutex
 	}
 	type args struct {
 		disk string
@@ -170,7 +104,7 @@ func TestFlysystem_Disk(t *testing.T) {
 			f := &Flysystem{
 				disk:         tt.fields.disk,
 				diskAdapters: tt.fields.diskAdapters,
-				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
 			}
 			if got := f.Disk(tt.args.disk); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Disk() = %v, want %v", got, tt.want)
@@ -183,7 +117,7 @@ func TestFlysystem_Exists(t *testing.T) {
 	type fields struct {
 		disk         string
 		diskAdapters map[string]IAdapter
-		diskNames    []string
+		l            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -202,7 +136,7 @@ func TestFlysystem_Exists(t *testing.T) {
 			f := &Flysystem{
 				disk:         tt.fields.disk,
 				diskAdapters: tt.fields.diskAdapters,
-				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
 			}
 			got, err := f.Exists(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -220,10 +154,11 @@ func TestFlysystem_Extend(t *testing.T) {
 	type fields struct {
 		disk         string
 		diskAdapters map[string]IAdapter
-		diskNames    []string
+		l            *sync.Mutex
 	}
 	type args struct {
 		adapter IAdapter
+		names   []string
 	}
 	tests := []struct {
 		name   string
@@ -238,9 +173,9 @@ func TestFlysystem_Extend(t *testing.T) {
 			f := &Flysystem{
 				disk:         tt.fields.disk,
 				diskAdapters: tt.fields.diskAdapters,
-				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
 			}
-			if got := f.Extend(tt.args.adapter); !reflect.DeepEqual(got, tt.want) {
+			if got := f.Extend(tt.args.adapter, tt.args.names...); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Extend() = %v, want %v", got, tt.want)
 			}
 		})
@@ -251,7 +186,7 @@ func TestFlysystem_FindAdapter(t *testing.T) {
 	type fields struct {
 		disk         string
 		diskAdapters map[string]IAdapter
-		diskNames    []string
+		l            *sync.Mutex
 	}
 	tests := []struct {
 		name   string
@@ -265,7 +200,7 @@ func TestFlysystem_FindAdapter(t *testing.T) {
 			f := &Flysystem{
 				disk:         tt.fields.disk,
 				diskAdapters: tt.fields.diskAdapters,
-				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
 			}
 			if got := f.FindAdapter(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("FindAdapter() = %v, want %v", got, tt.want)
@@ -278,7 +213,7 @@ func TestFlysystem_MimeType(t *testing.T) {
 	type fields struct {
 		disk         string
 		diskAdapters map[string]IAdapter
-		diskNames    []string
+		l            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -297,7 +232,7 @@ func TestFlysystem_MimeType(t *testing.T) {
 			f := &Flysystem{
 				disk:         tt.fields.disk,
 				diskAdapters: tt.fields.diskAdapters,
-				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
 			}
 			got, err := f.MimeType(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -315,7 +250,7 @@ func TestFlysystem_Move(t *testing.T) {
 	type fields struct {
 		disk         string
 		diskAdapters map[string]IAdapter
-		diskNames    []string
+		l            *sync.Mutex
 	}
 	type args struct {
 		source      string
@@ -335,7 +270,7 @@ func TestFlysystem_Move(t *testing.T) {
 			f := &Flysystem{
 				disk:         tt.fields.disk,
 				diskAdapters: tt.fields.diskAdapters,
-				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
 			}
 			got, err := f.Move(tt.args.source, tt.args.destination)
 			if (err != nil) != tt.wantErr {
@@ -353,7 +288,7 @@ func TestFlysystem_Read(t *testing.T) {
 	type fields struct {
 		disk         string
 		diskAdapters map[string]IAdapter
-		diskNames    []string
+		l            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -372,7 +307,7 @@ func TestFlysystem_Read(t *testing.T) {
 			f := &Flysystem{
 				disk:         tt.fields.disk,
 				diskAdapters: tt.fields.diskAdapters,
-				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
 			}
 			got, err := f.Read(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -390,7 +325,7 @@ func TestFlysystem_Size(t *testing.T) {
 	type fields struct {
 		disk         string
 		diskAdapters map[string]IAdapter
-		diskNames    []string
+		l            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -409,7 +344,7 @@ func TestFlysystem_Size(t *testing.T) {
 			f := &Flysystem{
 				disk:         tt.fields.disk,
 				diskAdapters: tt.fields.diskAdapters,
-				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
 			}
 			got, err := f.Size(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -427,7 +362,7 @@ func TestFlysystem_Update(t *testing.T) {
 	type fields struct {
 		disk         string
 		diskAdapters map[string]IAdapter
-		diskNames    []string
+		l            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -447,7 +382,7 @@ func TestFlysystem_Update(t *testing.T) {
 			f := &Flysystem{
 				disk:         tt.fields.disk,
 				diskAdapters: tt.fields.diskAdapters,
-				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
 			}
 			got, err := f.Update(tt.args.path, tt.args.contents)
 			if (err != nil) != tt.wantErr {
@@ -465,7 +400,7 @@ func TestFlysystem_UpdateStream(t *testing.T) {
 	type fields struct {
 		disk         string
 		diskAdapters map[string]IAdapter
-		diskNames    []string
+		l            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -485,7 +420,7 @@ func TestFlysystem_UpdateStream(t *testing.T) {
 			f := &Flysystem{
 				disk:         tt.fields.disk,
 				diskAdapters: tt.fields.diskAdapters,
-				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
 			}
 			got, err := f.UpdateStream(tt.args.path, tt.args.resource)
 			if (err != nil) != tt.wantErr {
@@ -503,7 +438,7 @@ func TestFlysystem_Write(t *testing.T) {
 	type fields struct {
 		disk         string
 		diskAdapters map[string]IAdapter
-		diskNames    []string
+		l            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -523,7 +458,7 @@ func TestFlysystem_Write(t *testing.T) {
 			f := &Flysystem{
 				disk:         tt.fields.disk,
 				diskAdapters: tt.fields.diskAdapters,
-				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
 			}
 			got, err := f.Write(tt.args.path, tt.args.contents)
 			if (err != nil) != tt.wantErr {
@@ -537,11 +472,49 @@ func TestFlysystem_Write(t *testing.T) {
 	}
 }
 
+func TestFlysystem_WriteReader(t *testing.T) {
+	type fields struct {
+		disk         string
+		diskAdapters map[string]IAdapter
+		l            *sync.Mutex
+	}
+	type args struct {
+		path   string
+		reader io.Reader
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    string
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f := &Flysystem{
+				disk:         tt.fields.disk,
+				diskAdapters: tt.fields.diskAdapters,
+				l:            tt.fields.l,
+			}
+			got, err := f.WriteReader(tt.args.path, tt.args.reader)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("WriteReader() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("WriteReader() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestFlysystem_WriteStream(t *testing.T) {
 	type fields struct {
 		disk         string
 		diskAdapters map[string]IAdapter
-		diskNames    []string
+		l            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -561,7 +534,7 @@ func TestFlysystem_WriteStream(t *testing.T) {
 			f := &Flysystem{
 				disk:         tt.fields.disk,
 				diskAdapters: tt.fields.diskAdapters,
-				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
 			}
 			got, err := f.WriteStream(tt.args.path, tt.args.resource)
 			if (err != nil) != tt.wantErr {

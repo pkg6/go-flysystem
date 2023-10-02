@@ -11,7 +11,6 @@ type IAdapter interface {
 	// DiskName Default Disk Name
 	DiskName() string
 	// Clone Initialization parameters
-	Clone() IAdapter
 }
 
 type AbstractAdapter struct {

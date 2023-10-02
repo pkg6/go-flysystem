@@ -20,6 +20,7 @@ $ go get github.com/pkg6/go-flysystem
 
 - **[Local](https://github.com/pkg6/go-flysystem/tree/main/local)**
 - **[ALiYun OSS](https://help.aliyun.com/product/31815.html)**
+- **[Google Cloud Storage](https://cloud.google.com/storage/docs/introduction?hl=zh-CN)**
 
 ## example
 
