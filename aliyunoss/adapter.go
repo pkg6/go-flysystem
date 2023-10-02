@@ -24,13 +24,12 @@ type Config struct {
 }
 
 type Adapter struct {
-	flysystem.AbstractAdapter
-	Config Config
+	Config *Config
 	Oss    *oss.Client
 	lock   *sync.Mutex
 }
 
-func New(config Config) flysystem.IAdapter {
+func New(config *Config) flysystem.IAdapter {
 	return Adapter{Config: config}.Clone()
 }
 
@@ -42,9 +41,6 @@ func (f Adapter) Clone() flysystem.IAdapter {
 	var err error
 	if f.Config.Endpoint == "" {
 		f.Config.Endpoint = DefaultEndpoint
-	}
-	if f.Config.PathPrefix != "" {
-		f.SetPathPrefix(f.Config.PathPrefix)
 	}
 	f.Oss, err = oss.New(f.Config.Endpoint, f.Config.AccessKeyID, f.Config.AccessKeySecret, func(client *oss.Client) {
 		if f.Config.OssConfig != nil {
@@ -61,7 +57,6 @@ func (f Adapter) Clone() flysystem.IAdapter {
 func (f *Adapter) Exists(path string) (bool, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
-	path = f.ApplyPathPrefix(path)
 	bucket, err := f.Oss.Bucket(f.Config.Bucket)
 	if err != nil {
 		return false, err
@@ -71,7 +66,6 @@ func (f *Adapter) Exists(path string) (bool, error) {
 func (f *Adapter) WriteReader(path string, reader io.Reader) (string, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
-	path = f.ApplyPathPrefix(path)
 	bucket, err := f.Oss.Bucket(f.Config.Bucket)
 	if err != nil {
 		return "", err
@@ -89,7 +83,6 @@ func (f *Adapter) Write(path string, contents []byte) (string, error) {
 func (f *Adapter) WriteStream(path, resource string) (string, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
-	path = f.ApplyPathPrefix(path)
 	bucket, err := f.Oss.Bucket(f.Config.Bucket)
 	if err != nil {
 		return "", err
@@ -109,7 +102,6 @@ func (f *Adapter) UpdateStream(path, resource string) (string, error) {
 func (f *Adapter) Read(path string) ([]byte, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
-	path = f.ApplyPathPrefix(path)
 	bucket, err := f.Oss.Bucket(f.Config.Bucket)
 	if err != nil {
 		return nil, err
@@ -129,7 +121,6 @@ func (f *Adapter) Read(path string) ([]byte, error) {
 func (f *Adapter) Delete(path string) (int64, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
-	path = f.ApplyPathPrefix(path)
 	bucket, err := f.Oss.Bucket(f.Config.Bucket)
 	if err != nil {
 		return 0, err
@@ -143,7 +134,6 @@ func (f *Adapter) Delete(path string) (int64, error) {
 func (f *Adapter) DeleteDirectory(dirname string) (int64, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
-	dirname = f.ApplyPathPrefix(dirname)
 	bucket, err := f.Oss.Bucket(f.Config.Bucket)
 	if err != nil {
 		return 0, err
@@ -217,8 +207,6 @@ func (f *Adapter) Copy(source, destination string) (bool, error) {
 func (f *Adapter) copyObject(srcObjectKey, destObjectKey string, isDelete bool) (bool, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
-	srcObjectKey = f.ApplyPathPrefix(srcObjectKey)
-	destObjectKey = f.ApplyPathPrefix(destObjectKey)
 	bucket, err := f.Oss.Bucket(f.Config.Bucket)
 	if err != nil {
 		return false, err
@@ -233,7 +221,6 @@ func (f *Adapter) copyObject(srcObjectKey, destObjectKey string, isDelete bool) 
 	return true, nil
 }
 func (f *Adapter) getObjectMeta(path string) (header http.Header, err error) {
-	path = f.ApplyPathPrefix(path)
 	bucket, err := f.Oss.Bucket(f.Config.Bucket)
 	if err != nil {
 		return header, err

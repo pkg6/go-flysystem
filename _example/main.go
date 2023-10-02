@@ -13,7 +13,7 @@ func main() {
 	root := "./_example/test_data"
 	// Create local adapter
 	localAdapter := local.New(root)
-	ossAdapter := aliyunoss.New(aliyunoss.Config{
+	ossAdapter := aliyunoss.New(&aliyunoss.Config{
 		Bucket:          "test",
 		Endpoint:        "oss-cn-hangzhou.aliyuncs.com",
 		AccessKeyID:     "*******************",

@@ -12,10 +12,9 @@ import (
 
 func TestAdapter_Clone(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	tests := []struct {
 		name   string
@@ -27,10 +26,9 @@ func TestAdapter_Clone(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			if got := f.Clone(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Clone() = %v, want %v", got, tt.want)
@@ -41,10 +39,9 @@ func TestAdapter_Clone(t *testing.T) {
 
 func TestAdapter_Copy(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	type args struct {
 		source      string
@@ -62,10 +59,9 @@ func TestAdapter_Copy(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			got, err := f.Copy(tt.args.source, tt.args.destination)
 			if (err != nil) != tt.wantErr {
@@ -81,10 +77,9 @@ func TestAdapter_Copy(t *testing.T) {
 
 func TestAdapter_CreateDirectory(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	type args struct {
 		dirname string
@@ -100,10 +95,9 @@ func TestAdapter_CreateDirectory(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			if err := f.CreateDirectory(tt.args.dirname); (err != nil) != tt.wantErr {
 				t.Errorf("CreateDirectory() error = %v, wantErr %v", err, tt.wantErr)
@@ -114,10 +108,9 @@ func TestAdapter_CreateDirectory(t *testing.T) {
 
 func TestAdapter_Delete(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -134,10 +127,9 @@ func TestAdapter_Delete(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			got, err := f.Delete(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -153,10 +145,9 @@ func TestAdapter_Delete(t *testing.T) {
 
 func TestAdapter_DeleteDirectory(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	type args struct {
 		dirname string
@@ -173,10 +164,9 @@ func TestAdapter_DeleteDirectory(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			got, err := f.DeleteDirectory(tt.args.dirname)
 			if (err != nil) != tt.wantErr {
@@ -192,10 +182,9 @@ func TestAdapter_DeleteDirectory(t *testing.T) {
 
 func TestAdapter_DiskName(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	tests := []struct {
 		name   string
@@ -207,10 +196,9 @@ func TestAdapter_DiskName(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			if got := f.DiskName(); got != tt.want {
 				t.Errorf("DiskName() = %v, want %v", got, tt.want)
@@ -221,10 +209,9 @@ func TestAdapter_DiskName(t *testing.T) {
 
 func TestAdapter_Exists(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -241,10 +228,9 @@ func TestAdapter_Exists(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			got, err := f.Exists(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -260,10 +246,9 @@ func TestAdapter_Exists(t *testing.T) {
 
 func TestAdapter_MimeType(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -280,10 +265,9 @@ func TestAdapter_MimeType(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			got, err := f.MimeType(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -299,10 +283,9 @@ func TestAdapter_MimeType(t *testing.T) {
 
 func TestAdapter_Move(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	type args struct {
 		source      string
@@ -320,10 +303,9 @@ func TestAdapter_Move(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			got, err := f.Move(tt.args.source, tt.args.destination)
 			if (err != nil) != tt.wantErr {
@@ -339,10 +321,9 @@ func TestAdapter_Move(t *testing.T) {
 
 func TestAdapter_Read(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -359,10 +340,9 @@ func TestAdapter_Read(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			got, err := f.Read(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -378,10 +358,9 @@ func TestAdapter_Read(t *testing.T) {
 
 func TestAdapter_Size(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -398,10 +377,9 @@ func TestAdapter_Size(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			got, err := f.Size(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -417,10 +395,9 @@ func TestAdapter_Size(t *testing.T) {
 
 func TestAdapter_Update(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -438,10 +415,9 @@ func TestAdapter_Update(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			got, err := f.Update(tt.args.path, tt.args.contents)
 			if (err != nil) != tt.wantErr {
@@ -457,10 +433,9 @@ func TestAdapter_Update(t *testing.T) {
 
 func TestAdapter_UpdateStream(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -478,10 +453,9 @@ func TestAdapter_UpdateStream(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			got, err := f.UpdateStream(tt.args.path, tt.args.resource)
 			if (err != nil) != tt.wantErr {
@@ -497,10 +471,9 @@ func TestAdapter_UpdateStream(t *testing.T) {
 
 func TestAdapter_Write(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -518,10 +491,9 @@ func TestAdapter_Write(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			got, err := f.Write(tt.args.path, tt.args.contents)
 			if (err != nil) != tt.wantErr {
@@ -537,10 +509,9 @@ func TestAdapter_Write(t *testing.T) {
 
 func TestAdapter_WriteReader(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	type args struct {
 		path   string
@@ -558,10 +529,9 @@ func TestAdapter_WriteReader(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			got, err := f.WriteReader(tt.args.path, tt.args.reader)
 			if (err != nil) != tt.wantErr {
@@ -577,10 +547,9 @@ func TestAdapter_WriteReader(t *testing.T) {
 
 func TestAdapter_WriteStream(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -598,10 +567,9 @@ func TestAdapter_WriteStream(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			got, err := f.WriteStream(tt.args.path, tt.args.resource)
 			if (err != nil) != tt.wantErr {
@@ -617,10 +585,9 @@ func TestAdapter_WriteStream(t *testing.T) {
 
 func TestAdapter_copyObject(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	type args struct {
 		srcObjectKey  string
@@ -639,10 +606,9 @@ func TestAdapter_copyObject(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			got, err := f.copyObject(tt.args.srcObjectKey, tt.args.destObjectKey, tt.args.isDelete)
 			if (err != nil) != tt.wantErr {
@@ -658,10 +624,9 @@ func TestAdapter_copyObject(t *testing.T) {
 
 func TestAdapter_getObjectMeta(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
-		Config          Config
-		Oss             *oss.Client
-		lock            *sync.Mutex
+		Config *Config
+		Oss    *oss.Client
+		lock   *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -678,10 +643,9 @@ func TestAdapter_getObjectMeta(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f := &Adapter{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				Oss:             tt.fields.Oss,
-				lock:            tt.fields.lock,
+				Config: tt.fields.Config,
+				Oss:    tt.fields.Oss,
+				lock:   tt.fields.lock,
 			}
 			gotHeader, err := f.getObjectMeta(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -697,7 +661,7 @@ func TestAdapter_getObjectMeta(t *testing.T) {
 
 func TestNew(t *testing.T) {
 	type args struct {
-		config Config
+		config *Config
 	}
 	tests := []struct {
 		name string
