@@ -1,15 +1,16 @@
-package fsoss
+package aliyunoss
 
 import (
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/pkg6/go-flysystem"
+	"io"
 	"net/http"
 	"reflect"
 	"sync"
 	"testing"
 )
 
-func TestFsOss_Clone(t *testing.T) {
+func TestAdapter_Clone(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -25,7 +26,7 @@ func TestFsOss_Clone(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
@@ -38,7 +39,7 @@ func TestFsOss_Clone(t *testing.T) {
 	}
 }
 
-func TestFsOss_Copy(t *testing.T) {
+func TestAdapter_Copy(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -60,7 +61,7 @@ func TestFsOss_Copy(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := &Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
@@ -78,7 +79,7 @@ func TestFsOss_Copy(t *testing.T) {
 	}
 }
 
-func TestFsOss_CreateDirectory(t *testing.T) {
+func TestAdapter_CreateDirectory(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -98,7 +99,7 @@ func TestFsOss_CreateDirectory(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := &Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
@@ -111,7 +112,7 @@ func TestFsOss_CreateDirectory(t *testing.T) {
 	}
 }
 
-func TestFsOss_Delete(t *testing.T) {
+func TestAdapter_Delete(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -132,7 +133,7 @@ func TestFsOss_Delete(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := &Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
@@ -150,7 +151,7 @@ func TestFsOss_Delete(t *testing.T) {
 	}
 }
 
-func TestFsOss_DeleteDirectory(t *testing.T) {
+func TestAdapter_DeleteDirectory(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -171,7 +172,7 @@ func TestFsOss_DeleteDirectory(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := &Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
@@ -189,7 +190,7 @@ func TestFsOss_DeleteDirectory(t *testing.T) {
 	}
 }
 
-func TestFsOss_DiskName(t *testing.T) {
+func TestAdapter_DiskName(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -205,7 +206,7 @@ func TestFsOss_DiskName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := &Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
@@ -218,7 +219,7 @@ func TestFsOss_DiskName(t *testing.T) {
 	}
 }
 
-func TestFsOss_Exists(t *testing.T) {
+func TestAdapter_Exists(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -239,7 +240,7 @@ func TestFsOss_Exists(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := &Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
@@ -257,7 +258,7 @@ func TestFsOss_Exists(t *testing.T) {
 	}
 }
 
-func TestFsOss_MimeType(t *testing.T) {
+func TestAdapter_MimeType(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -278,7 +279,7 @@ func TestFsOss_MimeType(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := &Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
@@ -296,7 +297,7 @@ func TestFsOss_MimeType(t *testing.T) {
 	}
 }
 
-func TestFsOss_Move(t *testing.T) {
+func TestAdapter_Move(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -318,7 +319,7 @@ func TestFsOss_Move(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := &Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
@@ -336,7 +337,7 @@ func TestFsOss_Move(t *testing.T) {
 	}
 }
 
-func TestFsOss_Read(t *testing.T) {
+func TestAdapter_Read(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -357,7 +358,7 @@ func TestFsOss_Read(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := &Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
@@ -375,7 +376,7 @@ func TestFsOss_Read(t *testing.T) {
 	}
 }
 
-func TestFsOss_Size(t *testing.T) {
+func TestAdapter_Size(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -396,7 +397,7 @@ func TestFsOss_Size(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := &Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
@@ -414,7 +415,7 @@ func TestFsOss_Size(t *testing.T) {
 	}
 }
 
-func TestFsOss_Update(t *testing.T) {
+func TestAdapter_Update(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -436,7 +437,7 @@ func TestFsOss_Update(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := &Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
@@ -454,7 +455,7 @@ func TestFsOss_Update(t *testing.T) {
 	}
 }
 
-func TestFsOss_UpdateStream(t *testing.T) {
+func TestAdapter_UpdateStream(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -476,7 +477,7 @@ func TestFsOss_UpdateStream(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := &Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
@@ -494,7 +495,7 @@ func TestFsOss_UpdateStream(t *testing.T) {
 	}
 }
 
-func TestFsOss_Write(t *testing.T) {
+func TestAdapter_Write(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -516,7 +517,7 @@ func TestFsOss_Write(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := &Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
@@ -534,7 +535,47 @@ func TestFsOss_Write(t *testing.T) {
 	}
 }
 
-func TestFsOss_WriteStream(t *testing.T) {
+func TestAdapter_WriteReader(t *testing.T) {
+	type fields struct {
+		AbstractAdapter flysystem.AbstractAdapter
+		Config          Config
+		Oss             *oss.Client
+		lock            *sync.Mutex
+	}
+	type args struct {
+		path   string
+		reader io.Reader
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    string
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f := &Adapter{
+				AbstractAdapter: tt.fields.AbstractAdapter,
+				Config:          tt.fields.Config,
+				Oss:             tt.fields.Oss,
+				lock:            tt.fields.lock,
+			}
+			got, err := f.WriteReader(tt.args.path, tt.args.reader)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("WriteReader() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("WriteReader() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestAdapter_WriteStream(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -556,7 +597,7 @@ func TestFsOss_WriteStream(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := &Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
@@ -574,7 +615,7 @@ func TestFsOss_WriteStream(t *testing.T) {
 	}
 }
 
-func TestFsOss_copyObject(t *testing.T) {
+func TestAdapter_copyObject(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -597,7 +638,7 @@ func TestFsOss_copyObject(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := &Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
@@ -615,7 +656,7 @@ func TestFsOss_copyObject(t *testing.T) {
 	}
 }
 
-func TestFsOss_getObjectMeta(t *testing.T) {
+func TestAdapter_getObjectMeta(t *testing.T) {
 	type fields struct {
 		AbstractAdapter flysystem.AbstractAdapter
 		Config          Config
@@ -636,7 +677,7 @@ func TestFsOss_getObjectMeta(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
+			f := &Adapter{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
 				Oss:             tt.fields.Oss,
