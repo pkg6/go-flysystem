@@ -75,6 +75,7 @@ type IFlysystem interface {
 
 type Flysystem struct {
 	disk         string
+	disks        []string
 	diskAdapters map[string]IAdapter
 	l            *sync.Mutex
 }
@@ -102,6 +103,7 @@ func (f *Flysystem) Extend(adapter IAdapter, names ...string) IFlysystem {
 	if len(names) > 0 {
 		name = names[0]
 	}
+	f.disks = append(f.disks, name)
 	f.diskAdapters[name] = adapter
 	return f
 }
@@ -118,6 +120,9 @@ func (f *Flysystem) FindAdapter() IAdapter {
 	var disk string
 	if f.disk != "" {
 		disk = f.disk
+	}
+	if disk == "" {
+		disk = f.disks[0]
 	}
 	if adapter, ok := f.diskAdapters[disk]; ok {
 		return adapter

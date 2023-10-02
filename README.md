@@ -35,22 +35,30 @@ import (
 	"strings"
 )
 
-func main() {
-	//Define the root directory of the local adapter
-	root := "./_example/test_data"
-	// Create local adapter
-	localAdapter := local.New(root)
-	ossAdapter := aliyunoss.New(&aliyunoss.Config{
+var (
+	root          = "./_example/test_data"
+	localAdapter  flysystem.IAdapter
+	local2Adapter flysystem.IAdapter
+	ossAdapter    flysystem.IAdapter
+)
+
+func init() {
+	localAdapter = local.New(root)
+	local2Adapter = local.New("./_example/test_data/2")
+	ossAdapter = aliyunoss.New(&aliyunoss.Config{
 		Bucket:          "test",
 		Endpoint:        "oss-cn-hangzhou.aliyuncs.com",
 		AccessKeyID:     "*******************",
 		AccessKeySecret: "**************",
-		PathPrefix:      "shop",
+		PathPrefix:      "test",
 	})
-	//Initialize the adapter
-	adapters := flysystem.NewAdapters(localAdapter)
+}
+
+func main() {
+	adapters := flysystem.NewAdapters()
+	adapters.Extend(localAdapter)
 	adapters.Extend(ossAdapter)
-	adapters.Extend(local.New("./_example/test_data/2"), "local2")
+	adapters.Extend(local2Adapter, "local2")
 	var err error
 	_, err = adapters.WriteReader("4.txt", strings.NewReader("test"))
 	fmt.Println(err)
@@ -87,12 +95,6 @@ func main() {
 	fmt.Println(err)
 	//Copy file
 	_, err = adapters.Copy("2.txt", "5.txt")
-	fmt.Println(err)
-	//Create directory
-	err = adapters.CreateDirectory("test1/test12")
-	fmt.Println(err)
-	//Delete directory
-	_, err = adapters.DeleteDirectory("test1/test12")
 	fmt.Println(err)
 }
 ~~~
