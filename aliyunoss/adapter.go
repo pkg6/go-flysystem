@@ -29,50 +29,51 @@ type Adapter struct {
 }
 
 func New(config *Config) flysystem.IAdapter {
-	return Adapter{Config: config}.Clone()
+	a := Adapter{Config: config}
+	return a.Clone()
 }
 
-func (f *Adapter) DiskName() string {
+func (a *Adapter) DiskName() string {
 	return flysystem.DiskNameOSS
 }
 
-func (f *Adapter) OSSClient() (*oss.Client, error) {
-	return oss.New(f.Config.Endpoint, f.Config.AccessKeyID, f.Config.AccessKeySecret, func(client *oss.Client) {
-		if f.Config.OssConfig != nil {
-			client.Config = f.Config.OssConfig
+func (a *Adapter) OSSClient() (*oss.Client, error) {
+	return oss.New(a.Config.Endpoint, a.Config.AccessKeyID, a.Config.AccessKeySecret, func(client *oss.Client) {
+		if a.Config.OssConfig != nil {
+			client.Config = a.Config.OssConfig
 		}
 	})
 }
 
-func (f *Adapter) OSSBucket() (*oss.Bucket, error) {
-	client, err := f.OSSClient()
+func (a *Adapter) OSSBucket() (*oss.Bucket, error) {
+	client, err := a.OSSClient()
 	if err != nil {
 		return nil, err
 	}
-	return client.Bucket(f.Config.Bucket)
+	return client.Bucket(a.Config.Bucket)
 }
 
-func (f Adapter) Clone() flysystem.IAdapter {
-	if f.Config.Endpoint == "" {
-		f.Config.Endpoint = DefaultEndpoint
+func (a *Adapter) Clone() flysystem.IAdapter {
+	if a.Config.Endpoint == "" {
+		a.Config.Endpoint = DefaultEndpoint
 	}
-	f.lock = &sync.Mutex{}
-	return &f
+	a.lock = &sync.Mutex{}
+	return a
 }
 
-func (f *Adapter) Exists(path string) (bool, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
-	bucket, err := f.OSSBucket()
+func (a *Adapter) Exists(path string) (bool, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
+	bucket, err := a.OSSBucket()
 	if err != nil {
 		return false, err
 	}
 	return bucket.IsObjectExist(path)
 }
-func (f *Adapter) WriteReader(path string, reader io.Reader) (string, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
-	bucket, err := f.OSSBucket()
+func (a *Adapter) WriteReader(path string, reader io.Reader) (string, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
+	bucket, err := a.OSSBucket()
 	if err != nil {
 		return "", err
 	}
@@ -82,14 +83,14 @@ func (f *Adapter) WriteReader(path string, reader io.Reader) (string, error) {
 	return path, nil
 }
 
-func (f *Adapter) Write(path string, contents []byte) (string, error) {
-	return f.WriteReader(path, bytes.NewReader(contents))
+func (a *Adapter) Write(path string, contents []byte) (string, error) {
+	return a.WriteReader(path, bytes.NewReader(contents))
 }
 
-func (f *Adapter) WriteStream(path, resource string) (string, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
-	bucket, err := f.OSSBucket()
+func (a *Adapter) WriteStream(path, resource string) (string, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
+	bucket, err := a.OSSBucket()
 	if err != nil {
 		return "", err
 	}
@@ -98,17 +99,17 @@ func (f *Adapter) WriteStream(path, resource string) (string, error) {
 	}
 	return path, nil
 }
-func (f *Adapter) Update(path string, contents []byte) (string, error) {
-	return f.Write(path, contents)
+func (a *Adapter) Update(path string, contents []byte) (string, error) {
+	return a.Write(path, contents)
 }
 
-func (f *Adapter) UpdateStream(path, resource string) (string, error) {
-	return f.WriteStream(path, resource)
+func (a *Adapter) UpdateStream(path, resource string) (string, error) {
+	return a.WriteStream(path, resource)
 }
-func (f *Adapter) Read(path string) ([]byte, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
-	bucket, err := f.OSSBucket()
+func (a *Adapter) Read(path string) ([]byte, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
+	bucket, err := a.OSSBucket()
 	if err != nil {
 		return nil, err
 	}
@@ -124,10 +125,10 @@ func (f *Adapter) Read(path string) ([]byte, error) {
 	return contents, err
 }
 
-func (f *Adapter) Delete(path string) (int64, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
-	bucket, err := f.OSSBucket()
+func (a *Adapter) Delete(path string) (int64, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
+	bucket, err := a.OSSBucket()
 	if err != nil {
 		return 0, err
 	}
@@ -137,10 +138,10 @@ func (f *Adapter) Delete(path string) (int64, error) {
 	return 1, nil
 }
 
-func (f *Adapter) DeleteDirectory(dirname string) (int64, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
-	bucket, err := f.OSSBucket()
+func (a *Adapter) DeleteDirectory(dirname string) (int64, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
+	bucket, err := a.OSSBucket()
 	if err != nil {
 		return 0, err
 	}
@@ -172,27 +173,27 @@ func (f *Adapter) DeleteDirectory(dirname string) (int64, error) {
 	}
 	return count, nil
 }
-func (f *Adapter) CreateDirectory(dirname string) error {
-	f.lock.Lock()
-	defer f.lock.Unlock()
-	_, err := f.Write(dirname, []byte(""))
+func (a *Adapter) CreateDirectory(dirname string) error {
+	a.lock.Lock()
+	defer a.lock.Unlock()
+	_, err := a.Write(dirname, []byte(""))
 	return err
 }
 
-func (f *Adapter) MimeType(path string) (string, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
-	meta, err := f.getObjectMeta(path)
+func (a *Adapter) MimeType(path string) (string, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
+	meta, err := a.getObjectMeta(path)
 	if err != nil {
 		return "", err
 	}
 	return meta.Get("content-type"), nil
 }
 
-func (f *Adapter) Size(path string) (int64, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
-	meta, err := f.getObjectMeta(path)
+func (a *Adapter) Size(path string) (int64, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
+	meta, err := a.getObjectMeta(path)
 	if err != nil {
 		return 0, err
 	}
@@ -202,18 +203,18 @@ func (f *Adapter) Size(path string) (int64, error) {
 	}
 	return i, nil
 }
-func (f *Adapter) Move(source, destination string) (bool, error) {
-	return f.copyObject(source, destination, true)
+func (a *Adapter) Move(source, destination string) (bool, error) {
+	return a.copyObject(source, destination, true)
 }
 
-func (f *Adapter) Copy(source, destination string) (bool, error) {
-	return f.copyObject(source, destination, false)
+func (a *Adapter) Copy(source, destination string) (bool, error) {
+	return a.copyObject(source, destination, false)
 }
 
-func (f *Adapter) copyObject(srcObjectKey, destObjectKey string, isDelete bool) (bool, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
-	bucket, err := f.OSSBucket()
+func (a *Adapter) copyObject(srcObjectKey, destObjectKey string, isDelete bool) (bool, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
+	bucket, err := a.OSSBucket()
 	if err != nil {
 		return false, err
 	}
@@ -226,8 +227,8 @@ func (f *Adapter) copyObject(srcObjectKey, destObjectKey string, isDelete bool) 
 	}
 	return true, nil
 }
-func (f *Adapter) getObjectMeta(path string) (header http.Header, err error) {
-	bucket, err := f.OSSBucket()
+func (a *Adapter) getObjectMeta(path string) (header http.Header, err error) {
+	bucket, err := a.OSSBucket()
 	if err != nil {
 		return header, err
 	}

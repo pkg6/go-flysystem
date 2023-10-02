@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/pkg6/go-flysystem"
 	"github.com/pkg6/go-flysystem/aliyunoss"
+	"github.com/pkg6/go-flysystem/googlecloudstorage"
 	"github.com/pkg6/go-flysystem/local"
+	"google.golang.org/api/option"
 	"strings"
 )
 
@@ -13,6 +15,7 @@ var (
 	localAdapter  flysystem.IAdapter
 	local2Adapter flysystem.IAdapter
 	ossAdapter    flysystem.IAdapter
+	google        flysystem.IAdapter
 )
 
 func init() {
@@ -25,6 +28,12 @@ func init() {
 		AccessKeySecret: "**************",
 		PathPrefix:      "test",
 	})
+	google = googlecloudstorage.New(&googlecloudstorage.Config{
+		Bucket: "test bucket",
+		Option: []option.ClientOption{
+			option.WithCredentialsFile("CredentialsFile.json"),
+		},
+	})
 }
 
 func main() {
@@ -32,6 +41,7 @@ func main() {
 	adapters.Extend(localAdapter)
 	adapters.Extend(ossAdapter)
 	adapters.Extend(local2Adapter, "local2")
+	adapters.Extend(google)
 	var err error
 	_, err = adapters.WriteReader("4.txt", strings.NewReader("test"))
 	fmt.Println(err)
