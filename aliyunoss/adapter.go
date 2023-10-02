@@ -53,14 +53,10 @@ func (f *Adapter) OSSBucket() (*oss.Bucket, error) {
 }
 
 func (f Adapter) Clone() flysystem.IAdapter {
-	var err error
 	if f.Config.Endpoint == "" {
 		f.Config.Endpoint = DefaultEndpoint
 	}
 	f.lock = &sync.Mutex{}
-	if err != nil {
-		panic(err)
-	}
 	return &f
 }
 
