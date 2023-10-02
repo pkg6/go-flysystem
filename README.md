@@ -20,7 +20,7 @@ $ go get github.com/pkg6/go-flysystem
 ## Officially supported adapters
 
 - **[Local](https://github.com/pkg6/go-flysystem/tree/main/local)**
-- **[OSS](https://help.aliyun.com/product/31815.html)**
+- **[ALiYun OSS](https://help.aliyun.com/product/31815.html)**
 
 ## example
 
@@ -30,7 +30,7 @@ package main
 import (
 	"fmt"
 	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/fsoss"
+	"github.com/pkg6/go-flysystem/aliyunoss"
 	"github.com/pkg6/go-flysystem/local"
 	"strings"
 )
@@ -40,7 +40,7 @@ func main() {
 	root := "./_example/test_data"
 	// Create local adapter
 	localAdapter := local.New(root)
-	ossAdapter := fsoss.New(fsoss.Config{
+	ossAdapter := aliyunoss.New(aliyunoss.Config{
 		Bucket:          "test",
 		Endpoint:        "oss-cn-hangzhou.aliyuncs.com",
 		AccessKeyID:     "*******************",
