@@ -2,14 +2,19 @@ package flysystem
 
 import (
 	"fmt"
+	"github.com/pkg6/go-flysystem/v2"
 	"io"
 	"os"
 	"sync"
 )
 
 const (
-	DiskNameOSS   = "oss"
-	DiskNameLocal = "local"
+	DiskNameLocal                   = v2.DiskNameLocal
+	DiskNameOSS                     = v2.DiskNameOSS
+	DiskNameCOS                     = v2.DiskNameCOS
+	DiskNameBOS                     = v2.DiskNameBOS
+	DiskNameGoogleCloudCloudStorage = v2.DiskNameGoogleCloudCloudStorage
+	DiskNameQiNiuKoDo               = v2.DiskNameQiNiuKoDo
 
 	PathTypeFile      = "file"
 	PathTypeDirectory = "directory"
@@ -57,16 +62,17 @@ type IFS interface {
 	Update(path string, contents []byte) (string, error)
 	// UpdateStream Return the updated full path based on resource file updates
 	UpdateStream(path, resource string) (string, error)
-	// DeleteDirectory Number of files deleted from the deleted directory
-	DeleteDirectory(dirname string) (int64, error)
-	// CreateDirectory create directory
-	CreateDirectory(dirname string) error
 	// MimeType Get File MimeType
 	MimeType(path string) (string, error)
 	// Move move file
 	Move(source, destination string) (bool, error)
 	// Copy copy file
 	Copy(source, destination string) (bool, error)
+}
+type IAdapter interface {
+	IFS
+	// DiskName Default Disk Name
+	DiskName() string
 }
 
 type IFlysystem interface {
@@ -163,14 +169,6 @@ func (f *Flysystem) Read(path string) ([]byte, error) {
 
 func (f *Flysystem) Delete(path string) (int64, error) {
 	return f.FindAdapter().Delete(path)
-}
-
-func (f *Flysystem) CreateDirectory(dirname string) error {
-	return f.FindAdapter().CreateDirectory(dirname)
-}
-
-func (f *Flysystem) DeleteDirectory(dirname string) (int64, error) {
-	return f.FindAdapter().DeleteDirectory(dirname)
 }
 
 func (f *Flysystem) MimeType(path string) (string, error) {

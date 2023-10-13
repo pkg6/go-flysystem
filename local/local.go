@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/pkg6/go-flysystem"
+	"github.com/pkg6/go-flysystem/v2"
 	"io"
 	"net/http"
 	"os"
@@ -13,7 +14,7 @@ import (
 )
 
 type Local struct {
-	flysystem.AbstractAdapter
+	v2.AbstractAdapter
 	root string
 	lock *sync.Mutex
 }
@@ -61,7 +62,7 @@ func (f *Local) Write(path string, contents []byte) (string, error) {
 	if err = f.ensureDirectory(dir); err != nil {
 		return "", err
 	}
-	if err = os.WriteFile(path, contents, flysystem.ModeFilePublic); err != nil {
+	if err = os.WriteFile(path, contents, v2.ModeFilePublic); err != nil {
 		return "", err
 	}
 	return path, nil
@@ -102,7 +103,7 @@ func (f *Local) Update(path string, contents []byte) (string, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 	path = f.ApplyPathPrefix(path)
-	if err := os.WriteFile(path, contents, flysystem.ModeFilePublic); err != nil {
+	if err := os.WriteFile(path, contents, v2.ModeFilePublic); err != nil {
 		return "", err
 	}
 	return path, nil
@@ -235,9 +236,9 @@ func (f *Local) SetVisibility(path, visibility string) (bool, error) {
 	}
 	var permission os.FileMode
 	if info.IsDir() {
-		permission = flysystem.FileModes[flysystem.PathTypeDirectory][visibility]
+		permission = v2.FileModes[v2.PathTypeDirectory][visibility]
 	} else {
-		permission = flysystem.FileModes[flysystem.PathTypeFile][visibility]
+		permission = v2.FileModes[v2.PathTypeFile][visibility]
 	}
 	err = os.Chmod(path, permission)
 	if err != nil {
@@ -276,7 +277,7 @@ func (f *Local) MimeType(path string) (string, error) {
 func (f *Local) ensureDirectory(root string) error {
 	var err error
 	if _, err = os.Stat(root); os.IsNotExist(err) {
-		if err = os.MkdirAll(root, flysystem.ModeDirPublic); err != nil {
+		if err = os.MkdirAll(root, v2.ModeDirPublic); err != nil {
 			return fmt.Errorf("impossible to create directory %s err=%s", root, err.Error())
 		}
 	}

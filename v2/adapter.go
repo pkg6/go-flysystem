@@ -1,18 +1,10 @@
-package flysystem
+package v2
 
 import (
 	"fmt"
 	"os"
 	"strings"
 )
-
-type IAdapter interface {
-	IFS
-	// DiskName Default Disk Name
-	DiskName() string
-	// Clone Initialization parameters
-	Clone() IAdapter
-}
 
 type AbstractAdapter struct {
 	prefix string
