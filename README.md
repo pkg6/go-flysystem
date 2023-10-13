@@ -17,11 +17,6 @@ Flysystem is a file storage library for Golang. It provides one interface to int
 $ go get github.com/pkg6/go-flysystem
 ~~~
 
-## Officially supported adapters
-
-- **[Local](https://github.com/pkg6/go-flysystem/tree/main/local)**
-- **[OSS](https://help.aliyun.com/product/31815.html)**
-
 ## example
 
 ~~~

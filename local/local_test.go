@@ -2,6 +2,8 @@ package local
 
 import (
 	"github.com/pkg6/go-flysystem"
+	"github.com/pkg6/go-flysystem/v2"
+	"io"
 	"reflect"
 	"sync"
 	"testing"
@@ -9,7 +11,7 @@ import (
 
 func TestLocal_Clone(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -36,7 +38,7 @@ func TestLocal_Clone(t *testing.T) {
 
 func TestLocal_Copy(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -74,7 +76,7 @@ func TestLocal_Copy(t *testing.T) {
 
 func TestLocal_CreateDirectory(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -105,7 +107,7 @@ func TestLocal_CreateDirectory(t *testing.T) {
 
 func TestLocal_Delete(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -142,7 +144,7 @@ func TestLocal_Delete(t *testing.T) {
 
 func TestLocal_DeleteDirectory(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -179,7 +181,7 @@ func TestLocal_DeleteDirectory(t *testing.T) {
 
 func TestLocal_DiskName(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -206,7 +208,7 @@ func TestLocal_DiskName(t *testing.T) {
 
 func TestLocal_Exists(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -243,7 +245,7 @@ func TestLocal_Exists(t *testing.T) {
 
 func TestLocal_MimeType(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -280,7 +282,7 @@ func TestLocal_MimeType(t *testing.T) {
 
 func TestLocal_Move(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -318,7 +320,7 @@ func TestLocal_Move(t *testing.T) {
 
 func TestLocal_Read(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -355,7 +357,7 @@ func TestLocal_Read(t *testing.T) {
 
 func TestLocal_SetVisibility(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -393,7 +395,7 @@ func TestLocal_SetVisibility(t *testing.T) {
 
 func TestLocal_Size(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -430,7 +432,7 @@ func TestLocal_Size(t *testing.T) {
 
 func TestLocal_Update(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -468,7 +470,7 @@ func TestLocal_Update(t *testing.T) {
 
 func TestLocal_UpdateStream(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -506,7 +508,7 @@ func TestLocal_UpdateStream(t *testing.T) {
 
 func TestLocal_Visibility(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -537,7 +539,7 @@ func TestLocal_Visibility(t *testing.T) {
 
 func TestLocal_Write(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -573,9 +575,47 @@ func TestLocal_Write(t *testing.T) {
 	}
 }
 
+func TestLocal_WriteReader(t *testing.T) {
+	type fields struct {
+		AbstractAdapter v2.AbstractAdapter
+		root            string
+		lock            *sync.Mutex
+	}
+	type args struct {
+		path   string
+		reader io.Reader
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    string
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f := &Local{
+				AbstractAdapter: tt.fields.AbstractAdapter,
+				root:            tt.fields.root,
+				lock:            tt.fields.lock,
+			}
+			got, err := f.WriteReader(tt.args.path, tt.args.reader)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("WriteReader() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("WriteReader() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestLocal_WriteStream(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
@@ -613,7 +653,7 @@ func TestLocal_WriteStream(t *testing.T) {
 
 func TestLocal_ensureDirectory(t *testing.T) {
 	type fields struct {
-		AbstractAdapter flysystem.AbstractAdapter
+		AbstractAdapter v2.AbstractAdapter
 		root            string
 		lock            *sync.Mutex
 	}
