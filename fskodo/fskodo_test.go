@@ -1,34 +1,31 @@
-package fsoss
+package fskodo
 
 import (
 	"github.com/pkg6/go-flysystem"
 	"github.com/pkg6/go-flysystem/v2"
-	"github.com/pkg6/go-flysystem/v2/fsoss"
+	"github.com/pkg6/go-flysystem/v2/fskodo"
 	"io"
 	"reflect"
-	"sync"
 	"testing"
 )
 
-func TestFsOss_Adapter(t *testing.T) {
+func TestFSKodo_Adapter(t *testing.T) {
 	type fields struct {
 		AbstractAdapter v2.AbstractAdapter
 		Config          *Config
-		lock            *sync.Mutex
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   *fsoss.Adapter
+		want   *fskodo.Adapter
 	}{
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
+			f := &FSKodo{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
 			}
 			if got := f.Adapter(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Adapter() = %v, want %v", got, tt.want)
@@ -37,38 +34,10 @@ func TestFsOss_Adapter(t *testing.T) {
 	}
 }
 
-func TestFsOss_Clone(t *testing.T) {
+func TestFSKodo_Copy(t *testing.T) {
 	type fields struct {
 		AbstractAdapter v2.AbstractAdapter
 		Config          *Config
-		lock            *sync.Mutex
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   flysystem.IAdapter
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			f := FsOss{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
-			}
-			if got := f.Clone(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Clone() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestFsOss_Copy(t *testing.T) {
-	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
-		Config          *Config
-		lock            *sync.Mutex
 	}
 	type args struct {
 		source      string
@@ -85,10 +54,9 @@ func TestFsOss_Copy(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
+			f := &FSKodo{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
 			}
 			got, err := f.Copy(tt.args.source, tt.args.destination)
 			if (err != nil) != tt.wantErr {
@@ -102,42 +70,10 @@ func TestFsOss_Copy(t *testing.T) {
 	}
 }
 
-func TestFsOss_CreateDirectory(t *testing.T) {
+func TestFSKodo_Delete(t *testing.T) {
 	type fields struct {
 		AbstractAdapter v2.AbstractAdapter
 		Config          *Config
-		lock            *sync.Mutex
-	}
-	type args struct {
-		dirname string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
-			}
-			if err := f.CreateDirectory(tt.args.dirname); (err != nil) != tt.wantErr {
-				t.Errorf("CreateDirectory() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
-func TestFsOss_Delete(t *testing.T) {
-	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
-		Config          *Config
-		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -153,10 +89,9 @@ func TestFsOss_Delete(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
+			f := &FSKodo{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
 			}
 			got, err := f.Delete(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -170,48 +105,10 @@ func TestFsOss_Delete(t *testing.T) {
 	}
 }
 
-func TestFsOss_DeleteDirectory(t *testing.T) {
+func TestFSKodo_DiskName(t *testing.T) {
 	type fields struct {
 		AbstractAdapter v2.AbstractAdapter
 		Config          *Config
-		lock            *sync.Mutex
-	}
-	type args struct {
-		dirname string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    int64
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
-			}
-			got, err := f.DeleteDirectory(tt.args.dirname)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("DeleteDirectory() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("DeleteDirectory() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestFsOss_DiskName(t *testing.T) {
-	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
-		Config          *Config
-		lock            *sync.Mutex
 	}
 	tests := []struct {
 		name   string
@@ -222,10 +119,9 @@ func TestFsOss_DiskName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
+			f := &FSKodo{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
 			}
 			if got := f.DiskName(); got != tt.want {
 				t.Errorf("DiskName() = %v, want %v", got, tt.want)
@@ -234,11 +130,10 @@ func TestFsOss_DiskName(t *testing.T) {
 	}
 }
 
-func TestFsOss_Exists(t *testing.T) {
+func TestFSKodo_Exists(t *testing.T) {
 	type fields struct {
 		AbstractAdapter v2.AbstractAdapter
 		Config          *Config
-		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -254,10 +149,9 @@ func TestFsOss_Exists(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
+			f := &FSKodo{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
 			}
 			got, err := f.Exists(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -271,11 +165,10 @@ func TestFsOss_Exists(t *testing.T) {
 	}
 }
 
-func TestFsOss_MimeType(t *testing.T) {
+func TestFSKodo_MimeType(t *testing.T) {
 	type fields struct {
 		AbstractAdapter v2.AbstractAdapter
 		Config          *Config
-		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -291,10 +184,9 @@ func TestFsOss_MimeType(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
+			f := &FSKodo{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
 			}
 			got, err := f.MimeType(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -308,11 +200,10 @@ func TestFsOss_MimeType(t *testing.T) {
 	}
 }
 
-func TestFsOss_Move(t *testing.T) {
+func TestFSKodo_Move(t *testing.T) {
 	type fields struct {
 		AbstractAdapter v2.AbstractAdapter
 		Config          *Config
-		lock            *sync.Mutex
 	}
 	type args struct {
 		source      string
@@ -329,10 +220,9 @@ func TestFsOss_Move(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
+			f := &FSKodo{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
 			}
 			got, err := f.Move(tt.args.source, tt.args.destination)
 			if (err != nil) != tt.wantErr {
@@ -346,11 +236,10 @@ func TestFsOss_Move(t *testing.T) {
 	}
 }
 
-func TestFsOss_Read(t *testing.T) {
+func TestFSKodo_Read(t *testing.T) {
 	type fields struct {
 		AbstractAdapter v2.AbstractAdapter
 		Config          *Config
-		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -366,10 +255,9 @@ func TestFsOss_Read(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
+			f := &FSKodo{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
 			}
 			got, err := f.Read(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -383,11 +271,10 @@ func TestFsOss_Read(t *testing.T) {
 	}
 }
 
-func TestFsOss_Size(t *testing.T) {
+func TestFSKodo_Size(t *testing.T) {
 	type fields struct {
 		AbstractAdapter v2.AbstractAdapter
 		Config          *Config
-		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -403,10 +290,9 @@ func TestFsOss_Size(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
+			f := &FSKodo{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
 			}
 			got, err := f.Size(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -420,11 +306,10 @@ func TestFsOss_Size(t *testing.T) {
 	}
 }
 
-func TestFsOss_Update(t *testing.T) {
+func TestFSKodo_Update(t *testing.T) {
 	type fields struct {
 		AbstractAdapter v2.AbstractAdapter
 		Config          *Config
-		lock            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -441,10 +326,9 @@ func TestFsOss_Update(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
+			f := &FSKodo{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
 			}
 			got, err := f.Update(tt.args.path, tt.args.contents)
 			if (err != nil) != tt.wantErr {
@@ -458,11 +342,10 @@ func TestFsOss_Update(t *testing.T) {
 	}
 }
 
-func TestFsOss_UpdateStream(t *testing.T) {
+func TestFSKodo_UpdateStream(t *testing.T) {
 	type fields struct {
 		AbstractAdapter v2.AbstractAdapter
 		Config          *Config
-		lock            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -479,10 +362,9 @@ func TestFsOss_UpdateStream(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
+			f := &FSKodo{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
 			}
 			got, err := f.UpdateStream(tt.args.path, tt.args.resource)
 			if (err != nil) != tt.wantErr {
@@ -496,11 +378,10 @@ func TestFsOss_UpdateStream(t *testing.T) {
 	}
 }
 
-func TestFsOss_Write(t *testing.T) {
+func TestFSKodo_Write(t *testing.T) {
 	type fields struct {
 		AbstractAdapter v2.AbstractAdapter
 		Config          *Config
-		lock            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -517,10 +398,9 @@ func TestFsOss_Write(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
+			f := &FSKodo{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
 			}
 			got, err := f.Write(tt.args.path, tt.args.contents)
 			if (err != nil) != tt.wantErr {
@@ -534,11 +414,10 @@ func TestFsOss_Write(t *testing.T) {
 	}
 }
 
-func TestFsOss_WriteReader(t *testing.T) {
+func TestFSKodo_WriteReader(t *testing.T) {
 	type fields struct {
 		AbstractAdapter v2.AbstractAdapter
 		Config          *Config
-		lock            *sync.Mutex
 	}
 	type args struct {
 		path   string
@@ -555,10 +434,9 @@ func TestFsOss_WriteReader(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
+			f := &FSKodo{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
 			}
 			got, err := f.WriteReader(tt.args.path, tt.args.reader)
 			if (err != nil) != tt.wantErr {
@@ -572,11 +450,10 @@ func TestFsOss_WriteReader(t *testing.T) {
 	}
 }
 
-func TestFsOss_WriteStream(t *testing.T) {
+func TestFSKodo_WriteStream(t *testing.T) {
 	type fields struct {
 		AbstractAdapter v2.AbstractAdapter
 		Config          *Config
-		lock            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -593,10 +470,9 @@ func TestFsOss_WriteStream(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
+			f := &FSKodo{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
 			}
 			got, err := f.WriteStream(tt.args.path, tt.args.resource)
 			if (err != nil) != tt.wantErr {
