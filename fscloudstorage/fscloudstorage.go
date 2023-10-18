@@ -6,10 +6,12 @@ import (
 	fscloudstorage2 "github.com/pkg6/go-flysystem/v2/fscloudstorage"
 	"google.golang.org/api/option"
 	"io"
+	"net/url"
 	"time"
 )
 
 type Config struct {
+	CDN             string
 	Bucket          string
 	WithTimeout     time.Duration
 	CredentialsFile string
@@ -24,9 +26,13 @@ type FSCloudStorage struct {
 func New(config *Config) flysystem.IAdapter {
 	return &FSCloudStorage{Config: config}
 }
-
+func (f *FSCloudStorage) URL(path string) (*url.URL, error) {
+	path = f.ApplyPathPrefix(path)
+	return f.Adapter().URL(path)
+}
 func (f *FSCloudStorage) Adapter() *fscloudstorage2.Adapter {
 	return fscloudstorage2.NewGCS(&fscloudstorage2.Config{
+		CDN:             f.Config.CDN,
 		Bucket:          f.Config.Bucket,
 		WithTimeout:     f.Config.WithTimeout,
 		CredentialsFile: f.Config.CredentialsFile,

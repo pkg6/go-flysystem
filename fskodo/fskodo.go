@@ -6,9 +6,11 @@ import (
 	fskodo2 "github.com/pkg6/go-flysystem/v2/fskodo"
 	"github.com/qiniu/go-sdk/v7/storage"
 	"io"
+	"net/url"
 )
 
 type Config struct {
+	CDN                  string
 	AccessKey, SecretKey string
 	Bucket               string
 	Policy               *storage.PutPolicy
@@ -26,6 +28,7 @@ func New(config *Config) flysystem.IAdapter {
 
 func (f *FSKodo) Adapter() *fskodo2.Adapter {
 	return fskodo2.NewKoDo(&fskodo2.Config{
+		CDN:       f.Config.CDN,
 		AccessKey: f.Config.AccessKey,
 		SecretKey: f.Config.SecretKey,
 		Bucket:    f.Config.Bucket,
@@ -33,7 +36,10 @@ func (f *FSKodo) Adapter() *fskodo2.Adapter {
 		Config:    f.Config.Config,
 	})
 }
-
+func (f *FSKodo) URL(path string) (*url.URL, error) {
+	path = f.ApplyPathPrefix(path)
+	return f.Adapter().URL(path)
+}
 func (f *FSKodo) Exists(path string) (bool, error) {
 	path = f.ApplyPathPrefix(path)
 	return f.Adapter().Exist(path)

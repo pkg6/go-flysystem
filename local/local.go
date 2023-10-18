@@ -7,6 +7,7 @@ import (
 	"github.com/pkg6/go-flysystem/v2"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -37,7 +38,10 @@ func (f Local) Clone() flysystem.IAdapter {
 	f.SetPathPrefix(f.root)
 	return &f
 }
-
+func (f *Local) URL(path string) (*url.URL, error) {
+	path = f.ApplyPathPrefix(path)
+	return nil, fmt.Errorf("url nill")
+}
 func (f *Local) Exists(path string) (bool, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()

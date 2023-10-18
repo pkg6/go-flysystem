@@ -6,6 +6,7 @@ import (
 	"github.com/pkg6/go-flysystem/v2"
 	fsoss2 "github.com/pkg6/go-flysystem/v2/fsoss"
 	"io"
+	"net/url"
 	"sync"
 )
 
@@ -14,6 +15,7 @@ var (
 )
 
 type Config struct {
+	CDN             string
 	Bucket          string
 	Endpoint        string
 	AccessKeyID     string
@@ -33,6 +35,7 @@ func New(config *Config) flysystem.IAdapter {
 
 func (f *FsOss) Adapter() *fsoss2.Adapter {
 	return fsoss2.NewOSS(&fsoss2.Config{
+		CDN:             f.Config.CDN,
 		Bucket:          f.Config.Bucket,
 		Endpoint:        f.Config.Endpoint,
 		AccessKeyID:     f.Config.AccessKeyID,
@@ -85,6 +88,10 @@ func (f *FsOss) Update(path string, contents []byte) (string, error) {
 	path = f.ApplyPathPrefix(path)
 	err := f.Adapter().Update(path, contents)
 	return path, err
+}
+func (f *FsOss) URL(path string) (*url.URL, error) {
+	path = f.ApplyPathPrefix(path)
+	return f.Adapter().URL(path)
 }
 
 func (f *FsOss) UpdateStream(path, resource string) (string, error) {

@@ -5,9 +5,11 @@ import (
 	"github.com/pkg6/go-flysystem/v2"
 	fscos2 "github.com/pkg6/go-flysystem/v2/fscos"
 	"io"
+	"net/url"
 )
 
 type Config struct {
+	CDN string
 	// 存储桶名称，由 bucketname-appid 组成，appid 必须填入，可以在 COS 控制台查看存储桶名称。 https://console.cloud.tencent.com/cos5/bucket
 	// 替换为用户的 region，存储桶 region 可以在 COS 控制台“存储桶概览”查看 https://console.cloud.tencent.com/
 	BucketURL string
@@ -27,12 +29,16 @@ func New(config *Config) flysystem.IAdapter {
 
 func (f *FSCos) Adapter() *fscos2.Adapter {
 	return fscos2.NewCOS(&fscos2.Config{
+		CDN:       f.Config.CDN,
 		BucketURL: f.Config.BucketURL,
 		SecretID:  f.Config.SecretID,
 		SecretKey: f.Config.SecretKey,
 	})
 }
-
+func (f *FSCos) URL(path string) (*url.URL, error) {
+	path = f.ApplyPathPrefix(path)
+	return f.Adapter().URL(path)
+}
 func (f *FSCos) Exists(path string) (bool, error) {
 	path = f.ApplyPathPrefix(path)
 	return f.Adapter().Exist(path)
