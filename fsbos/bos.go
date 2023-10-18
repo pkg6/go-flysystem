@@ -2,10 +2,11 @@ package fsbos
 
 import (
 	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/v2"
-	fsbos2 "github.com/pkg6/go-flysystem/v2/fsbos"
+	"github.com/pkg6/go-flysystem/gfs"
+	"github.com/pkg6/go-flysystem/gfs/fsbos"
 	"io"
 	"net/url"
+	"sync"
 )
 
 type Config struct {
@@ -18,16 +19,21 @@ type Config struct {
 	PathPrefix       string
 }
 type FSBos struct {
-	v2.AbstractAdapter
+	gfs.AbstractAdapter
 	Config *Config
+	lock   *sync.Mutex
 }
 
 func New(config *Config) flysystem.IAdapter {
 	return &FSBos{Config: config}
 }
 
-func (a *FSBos) Adapter() *fsbos2.Adapter {
-	return fsbos2.NewBOS(&fsbos2.Config{
+func (a *FSBos) Adapter() *fsbos.Adapter {
+	if a.lock == nil {
+		a.lock = &sync.Mutex{}
+	}
+	a.SetPathPrefix(a.Config.PathPrefix)
+	return fsbos.NewBOS(&fsbos.Config{
 		CDN:              a.Config.CDN,
 		Ak:               a.Config.Ak,
 		Sk:               a.Config.Sk,

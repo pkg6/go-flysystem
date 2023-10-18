@@ -1,23 +1,22 @@
-package fsoss
+package fsbos
 
 import (
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
-	v2 "github.com/pkg6/go-flysystem/v2"
+	"github.com/pkg6/go-flysystem/gfs"
 	"net/url"
 	"strings"
 )
 
 type Config struct {
-	CDN             string
-	Bucket          string
-	Endpoint        string
-	AccessKeyID     string
-	AccessKeySecret string
-	OssConfig       *oss.Config
+	CDN              string
+	Ak               string
+	Sk               string
+	Endpoint         string
+	RedirectDisabled bool
+	Bucket           string
 }
 
-func (c *Config) New() v2.IAdapter {
-	return NewOSS(c)
+func (c *Config) New() gfs.IAdapter {
+	return NewBOS(c)
 }
 
 func (c *Config) URL(path string) (*url.URL, error) {

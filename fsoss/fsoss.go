@@ -3,8 +3,8 @@ package fsoss
 import (
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/v2"
-	fsoss2 "github.com/pkg6/go-flysystem/v2/fsoss"
+	"github.com/pkg6/go-flysystem/gfs"
+	fsoss2 "github.com/pkg6/go-flysystem/gfs/fsoss"
 	"io"
 	"net/url"
 	"sync"
@@ -24,16 +24,24 @@ type Config struct {
 	PathPrefix      string
 }
 type FsOss struct {
-	v2.AbstractAdapter
+	gfs.AbstractAdapter
 	Config *Config
 	lock   *sync.Mutex
 }
 
 func New(config *Config) flysystem.IAdapter {
-	return FsOss{Config: config}.Clone()
+	f := &FsOss{Config: config}
+	return f
 }
 
 func (f *FsOss) Adapter() *fsoss2.Adapter {
+	if f.Config.Endpoint == "" {
+		f.Config.Endpoint = DefaultEndpoint
+	}
+	if f.lock == nil {
+		f.lock = &sync.Mutex{}
+	}
+	f.SetPathPrefix(f.Config.PathPrefix)
 	return fsoss2.NewOSS(&fsoss2.Config{
 		CDN:             f.Config.CDN,
 		Bucket:          f.Config.Bucket,
@@ -46,21 +54,6 @@ func (f *FsOss) Adapter() *fsoss2.Adapter {
 
 func (f *FsOss) DiskName() string {
 	return flysystem.DiskNameOSS
-}
-
-func (f FsOss) Clone() flysystem.IAdapter {
-	var err error
-	if f.Config.Endpoint == "" {
-		f.Config.Endpoint = DefaultEndpoint
-	}
-	if f.Config.PathPrefix != "" {
-		f.SetPathPrefix(f.Config.PathPrefix)
-	}
-	f.lock = &sync.Mutex{}
-	if err != nil {
-		panic(err)
-	}
-	return &f
 }
 
 func (f *FsOss) Exists(path string) (bool, error) {

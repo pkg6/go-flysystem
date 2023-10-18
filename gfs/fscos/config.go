@@ -1,7 +1,7 @@
 package fscos
 
 import (
-	v2 "github.com/pkg6/go-flysystem/v2"
+	"github.com/pkg6/go-flysystem/gfs"
 	"net/url"
 )
 
@@ -15,7 +15,7 @@ type Config struct {
 	SecretID, SecretKey string
 }
 
-func (c *Config) New() v2.IAdapter {
+func (c *Config) New() gfs.IAdapter {
 	return NewCOS(c)
 }
 func (c *Config) URL(path string) (*url.URL, error) {

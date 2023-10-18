@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	v2 "github.com/pkg6/go-flysystem/v2"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
+	"github.com/pkg6/go-flysystem/gfs"
 	"io"
 	"net/http"
 	"net/url"
@@ -19,7 +19,7 @@ type Adapter struct {
 	lock   *sync.Mutex
 }
 
-func New(config v2.IAdapterConfig) v2.IAdapter {
+func New(config gfs.IAdapterConfig) gfs.IAdapter {
 	return config.New()
 }
 
@@ -170,5 +170,5 @@ func (a *Adapter) Copy(source, destination string) (bool, error) {
 }
 
 func (a *Adapter) DiskName() string {
-	return v2.DiskNameQiNiuKoDo
+	return gfs.DiskNameQiNiuKoDo
 }

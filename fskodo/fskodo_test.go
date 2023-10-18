@@ -2,8 +2,8 @@ package fskodo
 
 import (
 	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/v2"
-	"github.com/pkg6/go-flysystem/v2/fskodo"
+	"github.com/pkg6/go-flysystem/gfs"
+	fskodo2 "github.com/pkg6/go-flysystem/gfs/fskodo"
 	"io"
 	"reflect"
 	"testing"
@@ -11,13 +11,13 @@ import (
 
 func TestFSKodo_Adapter(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   *fskodo.Adapter
+		want   *fskodo2.Adapter
 	}{
 		// TODO: Add test cases.
 	}
@@ -36,7 +36,7 @@ func TestFSKodo_Adapter(t *testing.T) {
 
 func TestFSKodo_Copy(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -72,7 +72,7 @@ func TestFSKodo_Copy(t *testing.T) {
 
 func TestFSKodo_Delete(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -107,7 +107,7 @@ func TestFSKodo_Delete(t *testing.T) {
 
 func TestFSKodo_DiskName(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	tests := []struct {
@@ -132,7 +132,7 @@ func TestFSKodo_DiskName(t *testing.T) {
 
 func TestFSKodo_Exists(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -167,7 +167,7 @@ func TestFSKodo_Exists(t *testing.T) {
 
 func TestFSKodo_MimeType(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -202,7 +202,7 @@ func TestFSKodo_MimeType(t *testing.T) {
 
 func TestFSKodo_Move(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -238,7 +238,7 @@ func TestFSKodo_Move(t *testing.T) {
 
 func TestFSKodo_Read(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -273,7 +273,7 @@ func TestFSKodo_Read(t *testing.T) {
 
 func TestFSKodo_Size(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -306,9 +306,44 @@ func TestFSKodo_Size(t *testing.T) {
 	}
 }
 
+func TestFSKodo_URL(t *testing.T) {
+	type fields struct {
+		AbstractAdapter gfs.AbstractAdapter
+		Config          *Config
+	}
+	type args struct {
+		path string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    *url.URL
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f := &FSKodo{
+				AbstractAdapter: tt.fields.AbstractAdapter,
+				Config:          tt.fields.Config,
+			}
+			got, err := f.URL(tt.args.path)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("URL() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("URL() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestFSKodo_Update(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -344,7 +379,7 @@ func TestFSKodo_Update(t *testing.T) {
 
 func TestFSKodo_UpdateStream(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -380,7 +415,7 @@ func TestFSKodo_UpdateStream(t *testing.T) {
 
 func TestFSKodo_Write(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -416,7 +451,7 @@ func TestFSKodo_Write(t *testing.T) {
 
 func TestFSKodo_WriteReader(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -452,7 +487,7 @@ func TestFSKodo_WriteReader(t *testing.T) {
 
 func TestFSKodo_WriteStream(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {

@@ -2,7 +2,7 @@ package flysystem
 
 import (
 	"fmt"
-	"github.com/pkg6/go-flysystem/v2"
+	"github.com/pkg6/go-flysystem/gfs"
 	"io"
 	"net/url"
 	"os"
@@ -10,12 +10,12 @@ import (
 )
 
 const (
-	DiskNameLocal                   = v2.DiskNameLocal
-	DiskNameOSS                     = v2.DiskNameOSS
-	DiskNameCOS                     = v2.DiskNameCOS
-	DiskNameBOS                     = v2.DiskNameBOS
-	DiskNameGoogleCloudCloudStorage = v2.DiskNameGoogleCloudCloudStorage
-	DiskNameQiNiuKoDo               = v2.DiskNameQiNiuKoDo
+	DiskNameLocal                   = gfs.DiskNameLocal
+	DiskNameOSS                     = gfs.DiskNameOSS
+	DiskNameCOS                     = gfs.DiskNameCOS
+	DiskNameBOS                     = gfs.DiskNameBOS
+	DiskNameGoogleCloudCloudStorage = gfs.DiskNameGoogleCloudCloudStorage
+	DiskNameQiNiuKoDo               = gfs.DiskNameQiNiuKoDo
 
 	PathTypeFile      = "file"
 	PathTypeDirectory = "directory"

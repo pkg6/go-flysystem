@@ -2,8 +2,8 @@ package fskodo
 
 import (
 	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/v2"
-	fskodo2 "github.com/pkg6/go-flysystem/v2/fskodo"
+	"github.com/pkg6/go-flysystem/gfs"
+	fskodo2 "github.com/pkg6/go-flysystem/gfs/fskodo"
 	"github.com/qiniu/go-sdk/v7/storage"
 	"io"
 	"net/url"
@@ -18,7 +18,7 @@ type Config struct {
 	PathPrefix           string
 }
 type FSKodo struct {
-	v2.AbstractAdapter
+	gfs.AbstractAdapter
 	Config *Config
 }
 

@@ -5,7 +5,7 @@ import (
 	"cloud.google.com/go/storage"
 	"context"
 	"fmt"
-	v2 "github.com/pkg6/go-flysystem/v2"
+	"github.com/pkg6/go-flysystem/gfs"
 	"google.golang.org/api/option"
 	"io"
 	"net/url"
@@ -27,7 +27,7 @@ type Adapter struct {
 	closeClient        *storage.Client
 }
 
-func New(config v2.IAdapterConfig) v2.IAdapter {
+func New(config gfs.IAdapterConfig) gfs.IAdapter {
 	return config.New()
 }
 func NewGCS(config *Config) *Adapter {
@@ -44,7 +44,7 @@ func NewGCS(config *Config) *Adapter {
 }
 
 func (a *Adapter) DiskName() string {
-	return v2.DiskNameGoogleCloudCloudStorage
+	return gfs.DiskNameGoogleCloudCloudStorage
 }
 
 func (a *Adapter) Client() (*storage.Client, error) {

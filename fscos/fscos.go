@@ -2,10 +2,11 @@ package fscos
 
 import (
 	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/v2"
-	fscos2 "github.com/pkg6/go-flysystem/v2/fscos"
+	"github.com/pkg6/go-flysystem/gfs"
+	fscos2 "github.com/pkg6/go-flysystem/gfs/fscos"
 	"io"
 	"net/url"
+	"sync"
 )
 
 type Config struct {
@@ -19,8 +20,9 @@ type Config struct {
 	PathPrefix          string
 }
 type FSCos struct {
-	v2.AbstractAdapter
+	gfs.AbstractAdapter
 	Config *Config
+	lock   *sync.Mutex
 }
 
 func New(config *Config) flysystem.IAdapter {
@@ -28,6 +30,10 @@ func New(config *Config) flysystem.IAdapter {
 }
 
 func (f *FSCos) Adapter() *fscos2.Adapter {
+	if f.lock == nil {
+		f.lock = &sync.Mutex{}
+	}
+	f.SetPathPrefix(f.Config.PathPrefix)
 	return fscos2.NewCOS(&fscos2.Config{
 		CDN:       f.Config.CDN,
 		BucketURL: f.Config.BucketURL,

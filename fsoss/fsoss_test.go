@@ -2,8 +2,8 @@ package fsoss
 
 import (
 	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/v2"
-	"github.com/pkg6/go-flysystem/v2/fsoss"
+	"github.com/pkg6/go-flysystem/gfs"
+	fsoss2 "github.com/pkg6/go-flysystem/gfs/fsoss"
 	"io"
 	"reflect"
 	"sync"
@@ -12,14 +12,14 @@ import (
 
 func TestFsOss_Adapter(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   *fsoss.Adapter
+		want   *fsoss2.Adapter
 	}{
 		// TODO: Add test cases.
 	}
@@ -39,7 +39,7 @@ func TestFsOss_Adapter(t *testing.T) {
 
 func TestFsOss_Clone(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
@@ -66,7 +66,7 @@ func TestFsOss_Clone(t *testing.T) {
 
 func TestFsOss_Copy(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
@@ -104,7 +104,7 @@ func TestFsOss_Copy(t *testing.T) {
 
 func TestFsOss_CreateDirectory(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
@@ -135,7 +135,7 @@ func TestFsOss_CreateDirectory(t *testing.T) {
 
 func TestFsOss_Delete(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
@@ -172,7 +172,7 @@ func TestFsOss_Delete(t *testing.T) {
 
 func TestFsOss_DeleteDirectory(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
@@ -209,7 +209,7 @@ func TestFsOss_DeleteDirectory(t *testing.T) {
 
 func TestFsOss_DiskName(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
@@ -236,7 +236,7 @@ func TestFsOss_DiskName(t *testing.T) {
 
 func TestFsOss_Exists(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
@@ -273,7 +273,7 @@ func TestFsOss_Exists(t *testing.T) {
 
 func TestFsOss_MimeType(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
@@ -310,7 +310,7 @@ func TestFsOss_MimeType(t *testing.T) {
 
 func TestFsOss_Move(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
@@ -348,7 +348,7 @@ func TestFsOss_Move(t *testing.T) {
 
 func TestFsOss_Read(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
@@ -385,7 +385,7 @@ func TestFsOss_Read(t *testing.T) {
 
 func TestFsOss_Size(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
@@ -420,9 +420,46 @@ func TestFsOss_Size(t *testing.T) {
 	}
 }
 
+func TestFsOss_URL(t *testing.T) {
+	type fields struct {
+		AbstractAdapter gfs.AbstractAdapter
+		Config          *Config
+		lock            *sync.Mutex
+	}
+	type args struct {
+		path string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    *url.URL
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f := &FsOss{
+				AbstractAdapter: tt.fields.AbstractAdapter,
+				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
+			}
+			got, err := f.URL(tt.args.path)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("URL() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("URL() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestFsOss_Update(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
@@ -460,7 +497,7 @@ func TestFsOss_Update(t *testing.T) {
 
 func TestFsOss_UpdateStream(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
@@ -498,7 +535,7 @@ func TestFsOss_UpdateStream(t *testing.T) {
 
 func TestFsOss_Write(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
@@ -536,7 +573,7 @@ func TestFsOss_Write(t *testing.T) {
 
 func TestFsOss_WriteReader(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
@@ -574,7 +611,7 @@ func TestFsOss_WriteReader(t *testing.T) {
 
 func TestFsOss_WriteStream(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 		lock            *sync.Mutex
 	}
