@@ -5,7 +5,9 @@ import (
 	"github.com/pkg6/go-flysystem/gfs"
 	fscloudstorage2 "github.com/pkg6/go-flysystem/gfs/fscloudstorage"
 	"io"
+	"net/url"
 	"reflect"
+	"sync"
 	"testing"
 )
 
@@ -13,6 +15,7 @@ func TestFSCloudStorage_Adapter(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	tests := []struct {
 		name   string
@@ -23,11 +26,12 @@ func TestFSCloudStorage_Adapter(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCloudStorage{
+			a := &FSCloudStorage{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			if got := f.Adapter(); !reflect.DeepEqual(got, tt.want) {
+			if got := a.Adapter(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Adapter() = %v, want %v", got, tt.want)
 			}
 		})
@@ -38,6 +42,7 @@ func TestFSCloudStorage_Copy(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		source      string
@@ -54,11 +59,12 @@ func TestFSCloudStorage_Copy(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCloudStorage{
+			a := &FSCloudStorage{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.Copy(tt.args.source, tt.args.destination)
+			got, err := a.Copy(tt.args.source, tt.args.destination)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Copy() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -74,6 +80,7 @@ func TestFSCloudStorage_Delete(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -89,11 +96,12 @@ func TestFSCloudStorage_Delete(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCloudStorage{
+			a := &FSCloudStorage{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.Delete(tt.args.path)
+			got, err := a.Delete(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Delete() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -109,6 +117,7 @@ func TestFSCloudStorage_DiskName(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	tests := []struct {
 		name   string
@@ -119,11 +128,12 @@ func TestFSCloudStorage_DiskName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCloudStorage{
+			a := &FSCloudStorage{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			if got := f.DiskName(); got != tt.want {
+			if got := a.DiskName(); got != tt.want {
 				t.Errorf("DiskName() = %v, want %v", got, tt.want)
 			}
 		})
@@ -134,6 +144,7 @@ func TestFSCloudStorage_Exists(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -149,11 +160,12 @@ func TestFSCloudStorage_Exists(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCloudStorage{
+			a := &FSCloudStorage{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.Exists(tt.args.path)
+			got, err := a.Exists(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Exists() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -169,6 +181,7 @@ func TestFSCloudStorage_MimeType(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -184,11 +197,12 @@ func TestFSCloudStorage_MimeType(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCloudStorage{
+			a := &FSCloudStorage{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.MimeType(tt.args.path)
+			got, err := a.MimeType(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("MimeType() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -204,6 +218,7 @@ func TestFSCloudStorage_Move(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		source      string
@@ -220,11 +235,12 @@ func TestFSCloudStorage_Move(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCloudStorage{
+			a := &FSCloudStorage{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.Move(tt.args.source, tt.args.destination)
+			got, err := a.Move(tt.args.source, tt.args.destination)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Move() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -240,6 +256,7 @@ func TestFSCloudStorage_Read(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -255,11 +272,12 @@ func TestFSCloudStorage_Read(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCloudStorage{
+			a := &FSCloudStorage{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.Read(tt.args.path)
+			got, err := a.Read(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Read() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -275,6 +293,7 @@ func TestFSCloudStorage_Size(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -290,11 +309,12 @@ func TestFSCloudStorage_Size(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCloudStorage{
+			a := &FSCloudStorage{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.Size(tt.args.path)
+			got, err := a.Size(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Size() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -310,6 +330,7 @@ func TestFSCloudStorage_URL(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -325,11 +346,12 @@ func TestFSCloudStorage_URL(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCloudStorage{
+			a := &FSCloudStorage{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.URL(tt.args.path)
+			got, err := a.URL(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("URL() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -345,6 +367,7 @@ func TestFSCloudStorage_Update(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -361,11 +384,12 @@ func TestFSCloudStorage_Update(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCloudStorage{
+			a := &FSCloudStorage{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.Update(tt.args.path, tt.args.contents)
+			got, err := a.Update(tt.args.path, tt.args.contents)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Update() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -381,6 +405,7 @@ func TestFSCloudStorage_UpdateStream(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -397,11 +422,12 @@ func TestFSCloudStorage_UpdateStream(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCloudStorage{
+			a := &FSCloudStorage{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.UpdateStream(tt.args.path, tt.args.resource)
+			got, err := a.UpdateStream(tt.args.path, tt.args.resource)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UpdateStream() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -417,6 +443,7 @@ func TestFSCloudStorage_Write(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -433,11 +460,12 @@ func TestFSCloudStorage_Write(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCloudStorage{
+			a := &FSCloudStorage{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.Write(tt.args.path, tt.args.contents)
+			got, err := a.Write(tt.args.path, tt.args.contents)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Write() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -453,6 +481,7 @@ func TestFSCloudStorage_WriteReader(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path   string
@@ -469,11 +498,12 @@ func TestFSCloudStorage_WriteReader(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCloudStorage{
+			a := &FSCloudStorage{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.WriteReader(tt.args.path, tt.args.reader)
+			got, err := a.WriteReader(tt.args.path, tt.args.reader)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("WriteReader() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -489,6 +519,7 @@ func TestFSCloudStorage_WriteStream(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -505,11 +536,12 @@ func TestFSCloudStorage_WriteStream(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCloudStorage{
+			a := &FSCloudStorage{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.WriteStream(tt.args.path, tt.args.resource)
+			got, err := a.WriteStream(tt.args.path, tt.args.resource)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("WriteStream() error = %v, wantErr %v", err, tt.wantErr)
 				return

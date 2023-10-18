@@ -7,6 +7,7 @@ import (
 	"github.com/qiniu/go-sdk/v7/storage"
 	"io"
 	"net/url"
+	"sync"
 )
 
 type Config struct {
@@ -20,93 +21,113 @@ type Config struct {
 type FSKodo struct {
 	gfs.AbstractAdapter
 	Config *Config
+	lock   *sync.Mutex
 }
 
 func New(config *Config) flysystem.IAdapter {
 	return &FSKodo{Config: config}
 }
+func (a *FSKodo) init() {
+	if a.lock == nil {
+		a.lock = &sync.Mutex{}
+	}
+	a.SetPathPrefix(a.Config.PathPrefix)
+}
 
-func (f *FSKodo) Adapter() *fskodo2.Adapter {
+func (a *FSKodo) Adapter() *fskodo2.Adapter {
 	return fskodo2.NewKoDo(&fskodo2.Config{
-		CDN:       f.Config.CDN,
-		AccessKey: f.Config.AccessKey,
-		SecretKey: f.Config.SecretKey,
-		Bucket:    f.Config.Bucket,
-		Policy:    f.Config.Policy,
-		Config:    f.Config.Config,
+		CDN:       a.Config.CDN,
+		AccessKey: a.Config.AccessKey,
+		SecretKey: a.Config.SecretKey,
+		Bucket:    a.Config.Bucket,
+		Policy:    a.Config.Policy,
+		Config:    a.Config.Config,
 	})
 }
-func (f *FSKodo) URL(path string) (*url.URL, error) {
-	path = f.ApplyPathPrefix(path)
-	return f.Adapter().URL(path)
+func (a *FSKodo) URL(path string) (*url.URL, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	return a.Adapter().URL(path)
 }
-func (f *FSKodo) Exists(path string) (bool, error) {
-	path = f.ApplyPathPrefix(path)
-	return f.Adapter().Exist(path)
+func (a *FSKodo) Exists(path string) (bool, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	return a.Adapter().Exist(path)
 }
 
-func (f *FSKodo) WriteReader(path string, reader io.Reader) (string, error) {
-	path = f.ApplyPathPrefix(path)
-	err := f.Adapter().WriteReader(path, reader)
+func (a *FSKodo) WriteReader(path string, reader io.Reader) (string, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	err := a.Adapter().WriteReader(path, reader)
 	return path, err
 }
 
-func (f *FSKodo) Write(path string, contents []byte) (string, error) {
-	path = f.ApplyPathPrefix(path)
-	err := f.Adapter().Write(path, contents)
+func (a *FSKodo) Write(path string, contents []byte) (string, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	err := a.Adapter().Write(path, contents)
 	return path, err
 }
 
-func (f *FSKodo) WriteStream(path, resource string) (string, error) {
-	path = f.ApplyPathPrefix(path)
-	err := f.Adapter().WriteStream(path, resource)
+func (a *FSKodo) WriteStream(path, resource string) (string, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	err := a.Adapter().WriteStream(path, resource)
 	return path, err
 }
 
-func (f *FSKodo) Read(path string) ([]byte, error) {
-	path = f.ApplyPathPrefix(path)
-	return f.Adapter().Read(path)
+func (a *FSKodo) Read(path string) ([]byte, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	return a.Adapter().Read(path)
 }
 
-func (f *FSKodo) Delete(path string) (int64, error) {
-	path = f.ApplyPathPrefix(path)
-	return f.Adapter().Delete(path)
+func (a *FSKodo) Delete(path string) (int64, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	return a.Adapter().Delete(path)
 }
 
-func (f *FSKodo) Size(path string) (int64, error) {
-	path = f.ApplyPathPrefix(path)
-	return f.Adapter().Size(path)
+func (a *FSKodo) Size(path string) (int64, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	return a.Adapter().Size(path)
 }
 
-func (f *FSKodo) Update(path string, contents []byte) (string, error) {
-	path = f.ApplyPathPrefix(path)
-	err := f.Adapter().Update(path, contents)
+func (a *FSKodo) Update(path string, contents []byte) (string, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	err := a.Adapter().Update(path, contents)
 	return path, err
 }
 
-func (f *FSKodo) UpdateStream(path, resource string) (string, error) {
-	path = f.ApplyPathPrefix(path)
-	err := f.Adapter().UpdateStream(path, resource)
+func (a *FSKodo) UpdateStream(path, resource string) (string, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	err := a.Adapter().UpdateStream(path, resource)
 	return path, err
 }
 
-func (f *FSKodo) MimeType(path string) (string, error) {
-	path = f.ApplyPathPrefix(path)
-	return f.Adapter().MimeType(path)
+func (a *FSKodo) MimeType(path string) (string, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	return a.Adapter().MimeType(path)
 }
 
-func (f *FSKodo) Move(source, destination string) (bool, error) {
-	source = f.ApplyPathPrefix(source)
-	destination = f.ApplyPathPrefix(destination)
-	return f.Adapter().Move(source, destination)
+func (a *FSKodo) Move(source, destination string) (bool, error) {
+	a.init()
+	source = a.ApplyPathPrefix(source)
+	destination = a.ApplyPathPrefix(destination)
+	return a.Adapter().Move(source, destination)
 }
 
-func (f *FSKodo) Copy(source, destination string) (bool, error) {
-	source = f.ApplyPathPrefix(source)
-	destination = f.ApplyPathPrefix(destination)
-	return f.Adapter().Copy(source, destination)
+func (a *FSKodo) Copy(source, destination string) (bool, error) {
+	a.init()
+	source = a.ApplyPathPrefix(source)
+	destination = a.ApplyPathPrefix(destination)
+	return a.Adapter().Copy(source, destination)
 }
 
-func (f *FSKodo) DiskName() string {
+func (a *FSKodo) DiskName() string {
 	return flysystem.DiskNameQiNiuKoDo
 }
