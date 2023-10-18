@@ -5,9 +5,10 @@ import (
 	"cloud.google.com/go/storage"
 	"context"
 	"fmt"
-	"github.com/pkg6/go-flysystem/v2"
+	v2 "github.com/pkg6/go-flysystem/v2"
 	"google.golang.org/api/option"
 	"io"
+	"net/url"
 	"os"
 	"sync"
 )
@@ -102,6 +103,9 @@ func (a *Adapter) CopyObject(source, destination string, deleteSource bool) (boo
 		}()
 	}
 	return true, nil
+}
+func (a *Adapter) URL(path string) (*url.URL, error) {
+	return a.Config.URL(path)
 }
 
 func (a *Adapter) Exist(path string) (bool, error) {

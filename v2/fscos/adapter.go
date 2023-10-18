@@ -3,7 +3,7 @@ package fscos
 import (
 	"context"
 	"fmt"
-	"github.com/pkg6/go-flysystem/v2"
+	v2 "github.com/pkg6/go-flysystem/v2"
 	"github.com/tencentyun/cos-go-sdk-v5"
 	"io"
 	"net/http"
@@ -15,6 +15,10 @@ import (
 type Adapter struct {
 	Config *Config
 	lock   *sync.Mutex
+}
+
+func (a *Adapter) URL(path string) (*url.URL, error) {
+	return a.Config.URL(path)
 }
 
 func New(config v2.IAdapterConfig) v2.IAdapter {

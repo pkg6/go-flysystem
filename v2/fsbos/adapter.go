@@ -3,9 +3,10 @@ package fsbos
 import (
 	"github.com/baidubce/bce-sdk-go/services/bos"
 	"github.com/baidubce/bce-sdk-go/services/bos/api"
-	"github.com/pkg6/go-flysystem/v2"
+	v2 "github.com/pkg6/go-flysystem/v2"
 	"io"
 	"net/http"
+	"net/url"
 	"sync"
 )
 
@@ -55,6 +56,10 @@ func (a *Adapter) ObjectMeta(path string) (*api.GetObjectMetaResult, error) {
 	return client.GetObjectMeta(a.Config.Bucket, path)
 }
 
+func (a *Adapter) URL(path string) (*url.URL, error) {
+	return a.Config.URL(path)
+}
+
 func (a *Adapter) Exist(path string) (bool, error) {
 	resp, err := a.ObjectMeta(path)
 	if err == nil && resp.ContentMD5 != "" {
@@ -90,7 +95,7 @@ func (a *Adapter) WriteStream(path, resource string) error {
 }
 
 func (a *Adapter) Read(path string) ([]byte, error) {
-	uri, err := a.Config.URI(path)
+	uri, err := a.URL(path)
 	if err != nil {
 		return nil, err
 	}

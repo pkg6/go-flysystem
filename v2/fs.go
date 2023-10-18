@@ -3,6 +3,7 @@ package v2
 import (
 	"fmt"
 	"io"
+	"net/url"
 	"sync"
 )
 
@@ -63,7 +64,9 @@ func (f *FsManage) FindAdapter() IAdapter {
 	}
 	panic(fmt.Sprintf("Unable to find %s disk", f.disk))
 }
-
+func (f *FsManage) URL(path string) (*url.URL, error) {
+	return f.FindAdapter().URL(path)
+}
 func (f *FsManage) Exist(path string) (bool, error) {
 	return f.FindAdapter().Exist(path)
 }

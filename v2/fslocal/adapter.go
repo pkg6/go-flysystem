@@ -2,9 +2,10 @@ package fslocal
 
 import (
 	"fmt"
-	"github.com/pkg6/go-flysystem/v2"
+	v2 "github.com/pkg6/go-flysystem/v2"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -26,13 +27,15 @@ func NewLocal(config *Config) *Adapter {
 	return a
 }
 
-func (f Adapter) DiskName() string {
+func (a Adapter) DiskName() string {
 	return v2.DiskNameLocal
 }
-
-func (f *Adapter) Exist(path string) (bool, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+func (a *Adapter) URL(path string) (*url.URL, error) {
+	return a.Config.URL(path)
+}
+func (a *Adapter) Exist(path string) (bool, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
 	_, err := os.Stat(path)
 	if err == nil {
 		return true, nil
@@ -42,14 +45,14 @@ func (f *Adapter) Exist(path string) (bool, error) {
 	}
 	return false, err
 }
-func (f *Adapter) Write(path string, contents []byte) error {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+func (a *Adapter) Write(path string, contents []byte) error {
+	a.lock.Lock()
+	defer a.lock.Unlock()
 	dir, err := filepath.Abs(filepath.Dir(path))
 	if err != nil {
 		return err
 	}
-	if err = f.ensureDirectory(dir); err != nil {
+	if err = a.ensureDirectory(dir); err != nil {
 		return err
 	}
 	if err = os.WriteFile(path, contents, v2.ModeFilePublic); err != nil {
@@ -58,14 +61,14 @@ func (f *Adapter) Write(path string, contents []byte) error {
 	return nil
 }
 
-func (f *Adapter) WriteReader(path string, reader io.Reader) error {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+func (a *Adapter) WriteReader(path string, reader io.Reader) error {
+	a.lock.Lock()
+	defer a.lock.Unlock()
 	dir, err := filepath.Abs(filepath.Dir(path))
 	if err != nil {
 		return err
 	}
-	if err = f.ensureDirectory(dir); err != nil {
+	if err = a.ensureDirectory(dir); err != nil {
 		return err
 	}
 	file, err := os.Create(path)
@@ -80,41 +83,41 @@ func (f *Adapter) WriteReader(path string, reader io.Reader) error {
 	return nil
 }
 
-func (f *Adapter) WriteStream(path, resource string) error {
+func (a *Adapter) WriteStream(path, resource string) error {
 	contents, err := os.ReadFile(resource)
 	if err != nil {
 		return err
 	}
-	return f.Write(path, contents)
+	return a.Write(path, contents)
 }
 
-func (f *Adapter) Update(path string, contents []byte) error {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+func (a *Adapter) Update(path string, contents []byte) error {
+	a.lock.Lock()
+	defer a.lock.Unlock()
 	if err := os.WriteFile(path, contents, v2.ModeFilePublic); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (f *Adapter) UpdateStream(path, resource string) error {
+func (a *Adapter) UpdateStream(path, resource string) error {
 	contents, err := os.ReadFile(resource)
 	if err != nil {
 		return err
 	}
-	return f.Update(path, contents)
+	return a.Update(path, contents)
 }
 
-func (f *Adapter) Read(path string) ([]byte, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+func (a *Adapter) Read(path string) ([]byte, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
 	contents, err := os.ReadFile(path)
 	return contents, err
 }
 
-func (f *Adapter) Delete(path string) (int64, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+func (a *Adapter) Delete(path string) (int64, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
 	err := os.Remove(path)
 	if err == nil {
 		return 0, err
@@ -122,9 +125,9 @@ func (f *Adapter) Delete(path string) (int64, error) {
 	return 1, nil
 }
 
-func (f *Adapter) Size(path string) (int64, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+func (a *Adapter) Size(path string) (int64, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
 	info, err := os.Stat(path)
 	if err != nil {
 		return 0, err
@@ -132,9 +135,9 @@ func (f *Adapter) Size(path string) (int64, error) {
 	return info.Size(), err
 }
 
-func (f *Adapter) Copy(source, destination string) (bool, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+func (a *Adapter) Copy(source, destination string) (bool, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
 	info, err := os.Stat(source)
 	if err != nil {
 		return false, err
@@ -143,7 +146,7 @@ func (f *Adapter) Copy(source, destination string) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("unable to copy file from %s to %s", source, destination)
 	}
-	if err := f.ensureDirectory(path.Dir(destination)); err != nil {
+	if err := a.ensureDirectory(path.Dir(destination)); err != nil {
 		return false, err
 	}
 	err = os.WriteFile(destination, input, info.Mode())
@@ -153,9 +156,9 @@ func (f *Adapter) Copy(source, destination string) (bool, error) {
 	return true, nil
 }
 
-func (f *Adapter) Move(source, destination string) (bool, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+func (a *Adapter) Move(source, destination string) (bool, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
 	info, err := os.Stat(source)
 	if err != nil {
 		return false, err
@@ -164,7 +167,7 @@ func (f *Adapter) Move(source, destination string) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("unable to copy file from %s to %s", source, destination)
 	}
-	if err := f.ensureDirectory(path.Dir(destination)); err != nil {
+	if err := a.ensureDirectory(path.Dir(destination)); err != nil {
 		return false, err
 	}
 	err = os.WriteFile(destination, input, info.Mode())
@@ -179,9 +182,9 @@ func (f *Adapter) Move(source, destination string) (bool, error) {
 }
 
 // MimeType 可以使用net/http包中提供的DetectContentType函数来获取文件MimeType
-func (f *Adapter) MimeType(path string) (string, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+func (a *Adapter) MimeType(path string) (string, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
 	file, err := os.Open(path)
 	if err != nil {
 		return "", err
@@ -196,18 +199,18 @@ func (f *Adapter) MimeType(path string) (string, error) {
 	return http.DetectContentType(buffer), nil
 }
 
-func (f *Adapter) CreateDirectory(dirname string) error {
-	f.lock.Lock()
-	defer f.lock.Unlock()
-	if err := f.ensureDirectory(dirname); err != nil {
+func (a *Adapter) CreateDirectory(dirname string) error {
+	a.lock.Lock()
+	defer a.lock.Unlock()
+	if err := a.ensureDirectory(dirname); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (f *Adapter) DeleteDirectory(dirname string) (int64, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+func (a *Adapter) DeleteDirectory(dirname string) (int64, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
 	var err error
 	var count int64
 	if err = filepath.Walk(dirname, func(path string, info os.FileInfo, err error) error {
@@ -221,9 +224,9 @@ func (f *Adapter) DeleteDirectory(dirname string) (int64, error) {
 	}
 	return count, nil
 }
-func (f *Adapter) SetVisibility(path, visibility string) (bool, error) {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+func (a *Adapter) SetVisibility(path, visibility string) (bool, error) {
+	a.lock.Lock()
+	defer a.lock.Unlock()
 	var err error
 	info, err := os.Stat(path)
 	if err != nil {
@@ -242,13 +245,13 @@ func (f *Adapter) SetVisibility(path, visibility string) (bool, error) {
 	return true, nil
 }
 
-func (f *Adapter) Visibility(path string) error {
-	f.lock.Lock()
-	defer f.lock.Unlock()
+func (a *Adapter) Visibility(path string) error {
+	a.lock.Lock()
+	defer a.lock.Unlock()
 	_, err := os.Stat(path)
 	return err
 }
-func (f *Adapter) ensureDirectory(root string) error {
+func (a *Adapter) ensureDirectory(root string) error {
 	var err error
 	if _, err = os.Stat(root); os.IsNotExist(err) {
 		if err = os.MkdirAll(root, v2.ModeDirPublic); err != nil {
