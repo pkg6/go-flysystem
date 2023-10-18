@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/pkg6/go-flysystem/v2"
 	"io"
+	"net/url"
 	"os"
 	"sync"
 )
@@ -68,6 +69,7 @@ type IFS interface {
 	Move(source, destination string) (bool, error)
 	// Copy copy file
 	Copy(source, destination string) (bool, error)
+	URL(path string) (*url.URL, error)
 }
 type IAdapter interface {
 	IFS
@@ -137,6 +139,9 @@ func (f *Flysystem) FindAdapter() IAdapter {
 		return adapter
 	}
 	panic(fmt.Sprintf("Unable to find %s disk", disk))
+}
+func (f *Flysystem) URL(path string) (*url.URL, error) {
+	return f.FindAdapter().URL(path)
 }
 
 func (f *Flysystem) Exists(path string) (bool, error) {
