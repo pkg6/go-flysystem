@@ -2,8 +2,8 @@ package fscloudstorage
 
 import (
 	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/v2"
-	"github.com/pkg6/go-flysystem/v2/fscloudstorage"
+	"github.com/pkg6/go-flysystem/gfs"
+	fscloudstorage2 "github.com/pkg6/go-flysystem/gfs/fscloudstorage"
 	"io"
 	"reflect"
 	"testing"
@@ -11,13 +11,13 @@ import (
 
 func TestFSCloudStorage_Adapter(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	tests := []struct {
 		name   string
 		fields fields
-		want   *fscloudstorage.Adapter
+		want   *fscloudstorage2.Adapter
 	}{
 		// TODO: Add test cases.
 	}
@@ -36,7 +36,7 @@ func TestFSCloudStorage_Adapter(t *testing.T) {
 
 func TestFSCloudStorage_Copy(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -72,7 +72,7 @@ func TestFSCloudStorage_Copy(t *testing.T) {
 
 func TestFSCloudStorage_Delete(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -107,7 +107,7 @@ func TestFSCloudStorage_Delete(t *testing.T) {
 
 func TestFSCloudStorage_DiskName(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	tests := []struct {
@@ -132,7 +132,7 @@ func TestFSCloudStorage_DiskName(t *testing.T) {
 
 func TestFSCloudStorage_Exists(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -167,7 +167,7 @@ func TestFSCloudStorage_Exists(t *testing.T) {
 
 func TestFSCloudStorage_MimeType(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -202,7 +202,7 @@ func TestFSCloudStorage_MimeType(t *testing.T) {
 
 func TestFSCloudStorage_Move(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -238,7 +238,7 @@ func TestFSCloudStorage_Move(t *testing.T) {
 
 func TestFSCloudStorage_Read(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -273,7 +273,7 @@ func TestFSCloudStorage_Read(t *testing.T) {
 
 func TestFSCloudStorage_Size(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -306,9 +306,44 @@ func TestFSCloudStorage_Size(t *testing.T) {
 	}
 }
 
+func TestFSCloudStorage_URL(t *testing.T) {
+	type fields struct {
+		AbstractAdapter gfs.AbstractAdapter
+		Config          *Config
+	}
+	type args struct {
+		path string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    *url.URL
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f := &FSCloudStorage{
+				AbstractAdapter: tt.fields.AbstractAdapter,
+				Config:          tt.fields.Config,
+			}
+			got, err := f.URL(tt.args.path)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("URL() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("URL() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestFSCloudStorage_Update(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -344,7 +379,7 @@ func TestFSCloudStorage_Update(t *testing.T) {
 
 func TestFSCloudStorage_UpdateStream(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -380,7 +415,7 @@ func TestFSCloudStorage_UpdateStream(t *testing.T) {
 
 func TestFSCloudStorage_Write(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -416,7 +451,7 @@ func TestFSCloudStorage_Write(t *testing.T) {
 
 func TestFSCloudStorage_WriteReader(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {
@@ -452,7 +487,7 @@ func TestFSCloudStorage_WriteReader(t *testing.T) {
 
 func TestFSCloudStorage_WriteStream(t *testing.T) {
 	type fields struct {
-		AbstractAdapter v2.AbstractAdapter
+		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
 	}
 	type args struct {

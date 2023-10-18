@@ -2,7 +2,7 @@ package fslocal
 
 import (
 	"fmt"
-	v2 "github.com/pkg6/go-flysystem/v2"
+	"github.com/pkg6/go-flysystem/gfs"
 	"io"
 	"net/http"
 	"net/url"
@@ -17,7 +17,7 @@ type Adapter struct {
 	lock   *sync.Mutex
 }
 
-func New(config v2.IAdapterConfig) v2.IAdapter {
+func New(config gfs.IAdapterConfig) gfs.IAdapter {
 	return config.New()
 }
 
@@ -27,15 +27,15 @@ func NewLocal(config *Config) *Adapter {
 	return a
 }
 
-func (a Adapter) DiskName() string {
-	return v2.DiskNameLocal
+func (f Adapter) DiskName() string {
+	return gfs.DiskNameLocal
 }
 func (a *Adapter) URL(path string) (*url.URL, error) {
 	return a.Config.URL(path)
 }
-func (a *Adapter) Exist(path string) (bool, error) {
-	a.lock.Lock()
-	defer a.lock.Unlock()
+func (f *Adapter) Exist(path string) (bool, error) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
 	_, err := os.Stat(path)
 	if err == nil {
 		return true, nil
@@ -45,30 +45,30 @@ func (a *Adapter) Exist(path string) (bool, error) {
 	}
 	return false, err
 }
-func (a *Adapter) Write(path string, contents []byte) error {
-	a.lock.Lock()
-	defer a.lock.Unlock()
+func (f *Adapter) Write(path string, contents []byte) error {
+	f.lock.Lock()
+	defer f.lock.Unlock()
 	dir, err := filepath.Abs(filepath.Dir(path))
 	if err != nil {
 		return err
 	}
-	if err = a.ensureDirectory(dir); err != nil {
+	if err = f.ensureDirectory(dir); err != nil {
 		return err
 	}
-	if err = os.WriteFile(path, contents, v2.ModeFilePublic); err != nil {
+	if err = os.WriteFile(path, contents, gfs.ModeFilePublic); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (a *Adapter) WriteReader(path string, reader io.Reader) error {
-	a.lock.Lock()
-	defer a.lock.Unlock()
+func (f *Adapter) WriteReader(path string, reader io.Reader) error {
+	f.lock.Lock()
+	defer f.lock.Unlock()
 	dir, err := filepath.Abs(filepath.Dir(path))
 	if err != nil {
 		return err
 	}
-	if err = a.ensureDirectory(dir); err != nil {
+	if err = f.ensureDirectory(dir); err != nil {
 		return err
 	}
 	file, err := os.Create(path)
@@ -83,41 +83,41 @@ func (a *Adapter) WriteReader(path string, reader io.Reader) error {
 	return nil
 }
 
-func (a *Adapter) WriteStream(path, resource string) error {
+func (f *Adapter) WriteStream(path, resource string) error {
 	contents, err := os.ReadFile(resource)
 	if err != nil {
 		return err
 	}
-	return a.Write(path, contents)
+	return f.Write(path, contents)
 }
 
-func (a *Adapter) Update(path string, contents []byte) error {
-	a.lock.Lock()
-	defer a.lock.Unlock()
-	if err := os.WriteFile(path, contents, v2.ModeFilePublic); err != nil {
+func (f *Adapter) Update(path string, contents []byte) error {
+	f.lock.Lock()
+	defer f.lock.Unlock()
+	if err := os.WriteFile(path, contents, gfs.ModeFilePublic); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (a *Adapter) UpdateStream(path, resource string) error {
+func (f *Adapter) UpdateStream(path, resource string) error {
 	contents, err := os.ReadFile(resource)
 	if err != nil {
 		return err
 	}
-	return a.Update(path, contents)
+	return f.Update(path, contents)
 }
 
-func (a *Adapter) Read(path string) ([]byte, error) {
-	a.lock.Lock()
-	defer a.lock.Unlock()
+func (f *Adapter) Read(path string) ([]byte, error) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
 	contents, err := os.ReadFile(path)
 	return contents, err
 }
 
-func (a *Adapter) Delete(path string) (int64, error) {
-	a.lock.Lock()
-	defer a.lock.Unlock()
+func (f *Adapter) Delete(path string) (int64, error) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
 	err := os.Remove(path)
 	if err == nil {
 		return 0, err
@@ -125,9 +125,9 @@ func (a *Adapter) Delete(path string) (int64, error) {
 	return 1, nil
 }
 
-func (a *Adapter) Size(path string) (int64, error) {
-	a.lock.Lock()
-	defer a.lock.Unlock()
+func (f *Adapter) Size(path string) (int64, error) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
 	info, err := os.Stat(path)
 	if err != nil {
 		return 0, err
@@ -135,9 +135,9 @@ func (a *Adapter) Size(path string) (int64, error) {
 	return info.Size(), err
 }
 
-func (a *Adapter) Copy(source, destination string) (bool, error) {
-	a.lock.Lock()
-	defer a.lock.Unlock()
+func (f *Adapter) Copy(source, destination string) (bool, error) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
 	info, err := os.Stat(source)
 	if err != nil {
 		return false, err
@@ -146,7 +146,7 @@ func (a *Adapter) Copy(source, destination string) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("unable to copy file from %s to %s", source, destination)
 	}
-	if err := a.ensureDirectory(path.Dir(destination)); err != nil {
+	if err := f.ensureDirectory(path.Dir(destination)); err != nil {
 		return false, err
 	}
 	err = os.WriteFile(destination, input, info.Mode())
@@ -156,9 +156,9 @@ func (a *Adapter) Copy(source, destination string) (bool, error) {
 	return true, nil
 }
 
-func (a *Adapter) Move(source, destination string) (bool, error) {
-	a.lock.Lock()
-	defer a.lock.Unlock()
+func (f *Adapter) Move(source, destination string) (bool, error) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
 	info, err := os.Stat(source)
 	if err != nil {
 		return false, err
@@ -167,7 +167,7 @@ func (a *Adapter) Move(source, destination string) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("unable to copy file from %s to %s", source, destination)
 	}
-	if err := a.ensureDirectory(path.Dir(destination)); err != nil {
+	if err := f.ensureDirectory(path.Dir(destination)); err != nil {
 		return false, err
 	}
 	err = os.WriteFile(destination, input, info.Mode())
@@ -182,9 +182,9 @@ func (a *Adapter) Move(source, destination string) (bool, error) {
 }
 
 // MimeType 可以使用net/http包中提供的DetectContentType函数来获取文件MimeType
-func (a *Adapter) MimeType(path string) (string, error) {
-	a.lock.Lock()
-	defer a.lock.Unlock()
+func (f *Adapter) MimeType(path string) (string, error) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
 	file, err := os.Open(path)
 	if err != nil {
 		return "", err
@@ -199,18 +199,18 @@ func (a *Adapter) MimeType(path string) (string, error) {
 	return http.DetectContentType(buffer), nil
 }
 
-func (a *Adapter) CreateDirectory(dirname string) error {
-	a.lock.Lock()
-	defer a.lock.Unlock()
-	if err := a.ensureDirectory(dirname); err != nil {
+func (f *Adapter) CreateDirectory(dirname string) error {
+	f.lock.Lock()
+	defer f.lock.Unlock()
+	if err := f.ensureDirectory(dirname); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (a *Adapter) DeleteDirectory(dirname string) (int64, error) {
-	a.lock.Lock()
-	defer a.lock.Unlock()
+func (f *Adapter) DeleteDirectory(dirname string) (int64, error) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
 	var err error
 	var count int64
 	if err = filepath.Walk(dirname, func(path string, info os.FileInfo, err error) error {
@@ -224,9 +224,9 @@ func (a *Adapter) DeleteDirectory(dirname string) (int64, error) {
 	}
 	return count, nil
 }
-func (a *Adapter) SetVisibility(path, visibility string) (bool, error) {
-	a.lock.Lock()
-	defer a.lock.Unlock()
+func (f *Adapter) SetVisibility(path, visibility string) (bool, error) {
+	f.lock.Lock()
+	defer f.lock.Unlock()
 	var err error
 	info, err := os.Stat(path)
 	if err != nil {
@@ -234,9 +234,9 @@ func (a *Adapter) SetVisibility(path, visibility string) (bool, error) {
 	}
 	var permission os.FileMode
 	if info.IsDir() {
-		permission = v2.FileModes[v2.PathTypeDirectory][visibility]
+		permission = gfs.FileModes[gfs.PathTypeDirectory][visibility]
 	} else {
-		permission = v2.FileModes[v2.PathTypeFile][visibility]
+		permission = gfs.FileModes[gfs.PathTypeFile][visibility]
 	}
 	err = os.Chmod(path, permission)
 	if err != nil {
@@ -245,16 +245,16 @@ func (a *Adapter) SetVisibility(path, visibility string) (bool, error) {
 	return true, nil
 }
 
-func (a *Adapter) Visibility(path string) error {
-	a.lock.Lock()
-	defer a.lock.Unlock()
+func (f *Adapter) Visibility(path string) error {
+	f.lock.Lock()
+	defer f.lock.Unlock()
 	_, err := os.Stat(path)
 	return err
 }
-func (a *Adapter) ensureDirectory(root string) error {
+func (f *Adapter) ensureDirectory(root string) error {
 	var err error
 	if _, err = os.Stat(root); os.IsNotExist(err) {
-		if err = os.MkdirAll(root, v2.ModeDirPublic); err != nil {
+		if err = os.MkdirAll(root, gfs.ModeDirPublic); err != nil {
 			return fmt.Errorf("impossible to create directory %s err=%s", root, err.Error())
 		}
 	}

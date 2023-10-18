@@ -3,8 +3,8 @@ package fscos
 import (
 	"context"
 	"fmt"
-	v2 "github.com/pkg6/go-flysystem/v2"
 	"github.com/tencentyun/cos-go-sdk-v5"
+	"github.com/pkg6/go-flysystem/gfs"
 	"io"
 	"net/http"
 	"net/url"
@@ -17,11 +17,7 @@ type Adapter struct {
 	lock   *sync.Mutex
 }
 
-func (a *Adapter) URL(path string) (*url.URL, error) {
-	return a.Config.URL(path)
-}
-
-func New(config v2.IAdapterConfig) v2.IAdapter {
+func New(config gfs.IAdapterConfig) gfs.IAdapter {
 	return config.New()
 }
 
@@ -70,6 +66,9 @@ func (a Adapter) Head(path string) (*cos.Response, error) {
 		return resp, err
 	}
 	return nil, fmt.Errorf("COS Head code=%v ,err=%v", resp.StatusCode, err)
+}
+func (a *Adapter) URL(path string) (*url.URL, error) {
+	return a.Config.URL(path)
 }
 func (a *Adapter) Exist(path string) (bool, error) {
 	client, err := a.Client()
@@ -147,7 +146,7 @@ func (a *Adapter) MimeType(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return head.Response.Header.Get(v2.HeaderGetContentType), nil
+	return head.Response.Header.Get(gfs.HeaderGetContentType), nil
 }
 
 func (a *Adapter) Move(source, destination string) (bool, error) {
@@ -159,5 +158,5 @@ func (a *Adapter) Copy(source, destination string) (bool, error) {
 }
 
 func (a *Adapter) DiskName() string {
-	return v2.DiskNameCOS
+	return gfs.DiskNameCOS
 }

@@ -3,7 +3,7 @@ package fsoss
 import (
 	"bytes"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
-	v2 "github.com/pkg6/go-flysystem/v2"
+	"github.com/pkg6/go-flysystem/gfs"
 	"io"
 	"net/http"
 	"net/url"
@@ -16,7 +16,7 @@ type Adapter struct {
 	lock   *sync.Mutex
 }
 
-func New(config v2.IAdapterConfig) v2.IAdapter {
+func New(config gfs.IAdapterConfig) gfs.IAdapter {
 	return config.New()
 }
 
@@ -30,7 +30,7 @@ func NewOSS(config *Config) *Adapter {
 }
 
 func (a *Adapter) DiskName() string {
-	return v2.DiskNameOSS
+	return gfs.DiskNameOSS
 }
 
 func (a *Adapter) Client() (*oss.Client, error) {
@@ -154,7 +154,7 @@ func (a *Adapter) MimeType(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return meta.Get(v2.HeaderGetContentType), nil
+	return meta.Get(gfs.HeaderGetContentType), nil
 }
 
 func (a *Adapter) Size(path string) (int64, error) {
@@ -164,7 +164,7 @@ func (a *Adapter) Size(path string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
-	i, err := strconv.ParseInt(meta.Get(v2.HeaderGetLength), 10, 64)
+	i, err := strconv.ParseInt(meta.Get(gfs.HeaderGetLength), 10, 64)
 	if err != nil {
 		return 0, err
 	}

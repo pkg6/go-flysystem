@@ -2,11 +2,12 @@ package fscloudstorage
 
 import (
 	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/v2"
-	fscloudstorage2 "github.com/pkg6/go-flysystem/v2/fscloudstorage"
+	"github.com/pkg6/go-flysystem/gfs"
+	fscloudstorage2 "github.com/pkg6/go-flysystem/gfs/fscloudstorage"
 	"google.golang.org/api/option"
 	"io"
 	"net/url"
+	"sync"
 	"time"
 )
 
@@ -19,8 +20,9 @@ type Config struct {
 	PathPrefix      string
 }
 type FSCloudStorage struct {
-	v2.AbstractAdapter
+	gfs.AbstractAdapter
 	Config *Config
+	lock   *sync.Mutex
 }
 
 func New(config *Config) flysystem.IAdapter {
@@ -31,6 +33,10 @@ func (f *FSCloudStorage) URL(path string) (*url.URL, error) {
 	return f.Adapter().URL(path)
 }
 func (f *FSCloudStorage) Adapter() *fscloudstorage2.Adapter {
+	if f.lock == nil {
+		f.lock = &sync.Mutex{}
+	}
+	f.SetPathPrefix(f.Config.PathPrefix)
 	return fscloudstorage2.NewGCS(&fscloudstorage2.Config{
 		CDN:             f.Config.CDN,
 		Bucket:          f.Config.Bucket,

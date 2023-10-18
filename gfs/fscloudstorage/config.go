@@ -1,7 +1,7 @@
 package fscloudstorage
 
 import (
-	v2 "github.com/pkg6/go-flysystem/v2"
+	"github.com/pkg6/go-flysystem/gfs"
 	"google.golang.org/api/option"
 	"net/url"
 	"time"
@@ -19,7 +19,7 @@ type Config struct {
 	Option          []option.ClientOption
 }
 
-func (c *Config) New() v2.IAdapter {
+func (c *Config) New() gfs.IAdapter {
 	return NewGCS(c)
 }
 

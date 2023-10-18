@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/v2"
+	"github.com/pkg6/go-flysystem/gfs"
 	"io"
 	"net/http"
 	"net/url"
@@ -15,7 +15,7 @@ import (
 )
 
 type Local struct {
-	v2.AbstractAdapter
+	gfs.AbstractAdapter
 	root string
 	lock *sync.Mutex
 }
@@ -38,6 +38,7 @@ func (f Local) Clone() flysystem.IAdapter {
 	f.SetPathPrefix(f.root)
 	return &f
 }
+
 func (f *Local) URL(path string) (*url.URL, error) {
 	path = f.ApplyPathPrefix(path)
 	return nil, fmt.Errorf("url nill")
@@ -66,7 +67,7 @@ func (f *Local) Write(path string, contents []byte) (string, error) {
 	if err = f.ensureDirectory(dir); err != nil {
 		return "", err
 	}
-	if err = os.WriteFile(path, contents, v2.ModeFilePublic); err != nil {
+	if err = os.WriteFile(path, contents, gfs.ModeFilePublic); err != nil {
 		return "", err
 	}
 	return path, nil
@@ -107,7 +108,7 @@ func (f *Local) Update(path string, contents []byte) (string, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 	path = f.ApplyPathPrefix(path)
-	if err := os.WriteFile(path, contents, v2.ModeFilePublic); err != nil {
+	if err := os.WriteFile(path, contents, gfs.ModeFilePublic); err != nil {
 		return "", err
 	}
 	return path, nil
@@ -240,9 +241,9 @@ func (f *Local) SetVisibility(path, visibility string) (bool, error) {
 	}
 	var permission os.FileMode
 	if info.IsDir() {
-		permission = v2.FileModes[v2.PathTypeDirectory][visibility]
+		permission = gfs.FileModes[gfs.PathTypeDirectory][visibility]
 	} else {
-		permission = v2.FileModes[v2.PathTypeFile][visibility]
+		permission = gfs.FileModes[gfs.PathTypeFile][visibility]
 	}
 	err = os.Chmod(path, permission)
 	if err != nil {
@@ -281,7 +282,7 @@ func (f *Local) MimeType(path string) (string, error) {
 func (f *Local) ensureDirectory(root string) error {
 	var err error
 	if _, err = os.Stat(root); os.IsNotExist(err) {
-		if err = os.MkdirAll(root, v2.ModeDirPublic); err != nil {
+		if err = os.MkdirAll(root, gfs.ModeDirPublic); err != nil {
 			return fmt.Errorf("impossible to create directory %s err=%s", root, err.Error())
 		}
 	}

@@ -3,7 +3,7 @@ package fsbos
 import (
 	"github.com/baidubce/bce-sdk-go/services/bos"
 	"github.com/baidubce/bce-sdk-go/services/bos/api"
-	v2 "github.com/pkg6/go-flysystem/v2"
+	"github.com/pkg6/go-flysystem/gfs"
 	"io"
 	"net/http"
 	"net/url"
@@ -26,7 +26,7 @@ type Adapter struct {
 	lock   *sync.Mutex
 }
 
-func New(config v2.IAdapterConfig) v2.IAdapter {
+func New(config gfs.IAdapterConfig) gfs.IAdapter {
 	return config.New()
 }
 
@@ -167,5 +167,5 @@ func (a *Adapter) CopyObject(source, destination string, deleteSource bool) (boo
 }
 
 func (a *Adapter) DiskName() string {
-	return v2.DiskNameBOS
+	return gfs.DiskNameBOS
 }

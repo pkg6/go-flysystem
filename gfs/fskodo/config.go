@@ -1,8 +1,8 @@
 package fskodo
 
 import (
-	v2 "github.com/pkg6/go-flysystem/v2"
 	"github.com/qiniu/go-sdk/v7/storage"
+	"github.com/pkg6/go-flysystem/gfs"
 	"net/url"
 )
 
@@ -15,7 +15,7 @@ type Config struct {
 	Config *storage.Config
 }
 
-func (c *Config) New() v2.IAdapter {
+func (c *Config) New() gfs.IAdapter {
 	return NewKoDo(c)
 }
 
