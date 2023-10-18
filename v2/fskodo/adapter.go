@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/pkg6/go-flysystem/v2"
+	v2 "github.com/pkg6/go-flysystem/v2"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync"
 )
@@ -67,7 +68,9 @@ func (a *Adapter) BucketManagerBatch(operations []string) error {
 func (a *Adapter) Stat(path string) (info storage.FileInfo, err error) {
 	return a.BucketManager().Stat(a.Config.Bucket, path)
 }
-
+func (a *Adapter) URL(path string) (*url.URL, error) {
+	return a.Config.URL(path)
+}
 func (a *Adapter) Exist(path string) (bool, error) {
 	stat, err := a.BucketManager().Stat(a.Config.Bucket, path)
 	if stat.Md5 != "" && err == nil {

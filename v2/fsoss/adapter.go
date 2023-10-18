@@ -3,9 +3,10 @@ package fsoss
 import (
 	"bytes"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
-	"github.com/pkg6/go-flysystem/v2"
+	v2 "github.com/pkg6/go-flysystem/v2"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"sync"
 )
@@ -72,7 +73,9 @@ func (a *Adapter) Meta(path string) (header http.Header, err error) {
 	}
 	return bucket.GetObjectMeta(path)
 }
-
+func (a *Adapter) URL(path string) (*url.URL, error) {
+	return a.Config.URL(path)
+}
 func (a *Adapter) Exist(path string) (bool, error) {
 	a.lock.Lock()
 	defer a.lock.Unlock()

@@ -1,6 +1,10 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/zzqqw/gfs)](https://goreportcard.com/report/github.com/zzqqw/gfs)
+[![Go.Dev reference](https://img.shields.io/badge/go.dev-reference-blue?logo=go&logoColor=white)](https://pkg.go.dev/github.com/zzqqw/gfs?tab=doc)
+[![Sourcegraph](https://sourcegraph.com/github.com/zzqqw/gfs/-/badge.svg)](https://sourcegraph.com/github.com/zzqqw/gfs?badge)
+[![Release](https://img.shields.io/github/release/zzqqw/gfs.svg?style=flat-square)](https://github.com/zzqqw/gfs/releases)
 
-## go-flysystem
-go-flysystem is a file storage library for Golang. It provides one interface to interact with many types of fs. When you use gfs, you're not only protected from vendor lock-in, you'll also have a consistent experience for which ever storage is right for you.
+## gfs
+gfs is a file storage library for Golang. It provides one interface to interact with many types of fs. When you use gfs, you're not only protected from vendor lock-in, you'll also have a consistent experience for which ever storage is right for you.
 
 ## Officially supported adapters
 

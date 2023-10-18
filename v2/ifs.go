@@ -2,6 +2,7 @@ package v2
 
 import (
 	"io"
+	"net/url"
 	"os"
 )
 
@@ -40,6 +41,7 @@ var (
 )
 
 type IFS interface {
+	URL(path string) (*url.URL, error)
 	// Exist Determine if the file exists
 	Exist(path string) (bool, error)
 	// WriteReader write file content and return full path
@@ -74,6 +76,7 @@ type IAdapter interface {
 
 type IAdapterConfig interface {
 	New() IAdapter
+	URL(path string) (*url.URL, error)
 }
 
 type IFSManage interface {
