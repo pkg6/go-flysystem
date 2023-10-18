@@ -34,7 +34,7 @@ func New(config *Config) flysystem.IAdapter {
 	return f
 }
 
-func (f *FsOss) Adapter() *fsoss2.Adapter {
+func (f *FsOss) init() {
 	if f.Config.Endpoint == "" {
 		f.Config.Endpoint = DefaultEndpoint
 	}
@@ -42,6 +42,9 @@ func (f *FsOss) Adapter() *fsoss2.Adapter {
 		f.lock = &sync.Mutex{}
 	}
 	f.SetPathPrefix(f.Config.PathPrefix)
+}
+
+func (f *FsOss) Adapter() *fsoss2.Adapter {
 	return fsoss2.NewOSS(&fsoss2.Config{
 		CDN:             f.Config.CDN,
 		Bucket:          f.Config.Bucket,
@@ -57,16 +60,19 @@ func (f *FsOss) DiskName() string {
 }
 
 func (f *FsOss) Exists(path string) (bool, error) {
+	f.init()
 	path = f.ApplyPathPrefix(path)
 	return f.Adapter().Exist(path)
 }
 func (f *FsOss) WriteReader(path string, reader io.Reader) (string, error) {
+	f.init()
 	path = f.ApplyPathPrefix(path)
 	err := f.Adapter().WriteReader(path, reader)
 	return path, err
 }
 
 func (f *FsOss) Write(path string, contents []byte) (string, error) {
+	f.init()
 	path = f.ApplyPathPrefix(path)
 	err := f.Adapter().Write(path, contents)
 	return path, err
@@ -78,46 +84,55 @@ func (f *FsOss) WriteStream(path, resource string) (string, error) {
 	return path, err
 }
 func (f *FsOss) Update(path string, contents []byte) (string, error) {
+	f.init()
 	path = f.ApplyPathPrefix(path)
 	err := f.Adapter().Update(path, contents)
 	return path, err
 }
 func (f *FsOss) URL(path string) (*url.URL, error) {
+	f.init()
 	path = f.ApplyPathPrefix(path)
 	return f.Adapter().URL(path)
 }
 
 func (f *FsOss) UpdateStream(path, resource string) (string, error) {
+	f.init()
 	path = f.ApplyPathPrefix(path)
 	err := f.Adapter().UpdateStream(path, resource)
 	return path, err
 }
 func (f *FsOss) Read(path string) ([]byte, error) {
+	f.init()
 	path = f.ApplyPathPrefix(path)
 	return f.Adapter().Read(path)
 }
 
 func (f *FsOss) Delete(path string) (int64, error) {
+	f.init()
 	path = f.ApplyPathPrefix(path)
 	return f.Adapter().Delete(path)
 }
 
 func (f *FsOss) MimeType(path string) (string, error) {
+	f.init()
 	path = f.ApplyPathPrefix(path)
 	return f.Adapter().MimeType(path)
 }
 
 func (f *FsOss) Size(path string) (int64, error) {
+	f.init()
 	path = f.ApplyPathPrefix(path)
 	return f.Adapter().Size(path)
 }
 func (f *FsOss) Move(source, destination string) (bool, error) {
+	f.init()
 	source = f.ApplyPathPrefix(source)
 	destination = f.ApplyPathPrefix(destination)
 	return f.Adapter().Move(source, destination)
 }
 
 func (f *FsOss) Copy(source, destination string) (bool, error) {
+	f.init()
 	source = f.ApplyPathPrefix(source)
 	destination = f.ApplyPathPrefix(destination)
 	return f.Adapter().Copy(source, destination)

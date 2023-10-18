@@ -28,90 +28,104 @@ type FSCos struct {
 func New(config *Config) flysystem.IAdapter {
 	return &FSCos{Config: config}
 }
-
-func (f *FSCos) Adapter() *fscos2.Adapter {
-	if f.lock == nil {
-		f.lock = &sync.Mutex{}
+func (a *FSCos) init() {
+	if a.lock == nil {
+		a.lock = &sync.Mutex{}
 	}
-	f.SetPathPrefix(f.Config.PathPrefix)
+	a.SetPathPrefix(a.Config.PathPrefix)
+}
+func (a *FSCos) Adapter() *fscos2.Adapter {
 	return fscos2.NewCOS(&fscos2.Config{
-		CDN:       f.Config.CDN,
-		BucketURL: f.Config.BucketURL,
-		SecretID:  f.Config.SecretID,
-		SecretKey: f.Config.SecretKey,
+		CDN:       a.Config.CDN,
+		BucketURL: a.Config.BucketURL,
+		SecretID:  a.Config.SecretID,
+		SecretKey: a.Config.SecretKey,
 	})
 }
-func (f *FSCos) URL(path string) (*url.URL, error) {
-	path = f.ApplyPathPrefix(path)
-	return f.Adapter().URL(path)
+func (a *FSCos) URL(path string) (*url.URL, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	return a.Adapter().URL(path)
 }
-func (f *FSCos) Exists(path string) (bool, error) {
-	path = f.ApplyPathPrefix(path)
-	return f.Adapter().Exist(path)
+func (a *FSCos) Exists(path string) (bool, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	return a.Adapter().Exist(path)
 }
 
-func (f *FSCos) WriteReader(path string, reader io.Reader) (string, error) {
-	path = f.ApplyPathPrefix(path)
-	err := f.Adapter().WriteReader(path, reader)
+func (a *FSCos) WriteReader(path string, reader io.Reader) (string, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	err := a.Adapter().WriteReader(path, reader)
 	return path, err
 }
 
-func (f *FSCos) Write(path string, contents []byte) (string, error) {
-	path = f.ApplyPathPrefix(path)
-	err := f.Adapter().Write(path, contents)
+func (a *FSCos) Write(path string, contents []byte) (string, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	err := a.Adapter().Write(path, contents)
 	return path, err
 }
 
-func (f *FSCos) WriteStream(path, resource string) (string, error) {
-	path = f.ApplyPathPrefix(path)
-	err := f.Adapter().WriteStream(path, resource)
+func (a *FSCos) WriteStream(path, resource string) (string, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	err := a.Adapter().WriteStream(path, resource)
 	return path, err
 }
 
-func (f *FSCos) Read(path string) ([]byte, error) {
-	path = f.ApplyPathPrefix(path)
-	return f.Adapter().Read(path)
+func (a *FSCos) Read(path string) ([]byte, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	return a.Adapter().Read(path)
 }
 
-func (f *FSCos) Delete(path string) (int64, error) {
-	path = f.ApplyPathPrefix(path)
-	return f.Adapter().Delete(path)
+func (a *FSCos) Delete(path string) (int64, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	return a.Adapter().Delete(path)
 }
 
-func (f *FSCos) Size(path string) (int64, error) {
-	path = f.ApplyPathPrefix(path)
-	return f.Adapter().Size(path)
+func (a *FSCos) Size(path string) (int64, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	return a.Adapter().Size(path)
 }
 
-func (f *FSCos) Update(path string, contents []byte) (string, error) {
-	path = f.ApplyPathPrefix(path)
-	err := f.Adapter().Update(path, contents)
+func (a *FSCos) Update(path string, contents []byte) (string, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	err := a.Adapter().Update(path, contents)
 	return path, err
 }
 
-func (f *FSCos) UpdateStream(path, resource string) (string, error) {
-	path = f.ApplyPathPrefix(path)
-	err := f.Adapter().UpdateStream(path, resource)
+func (a *FSCos) UpdateStream(path, resource string) (string, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	err := a.Adapter().UpdateStream(path, resource)
 	return path, err
 }
 
-func (f *FSCos) MimeType(path string) (string, error) {
-	path = f.ApplyPathPrefix(path)
-	return f.Adapter().MimeType(path)
+func (a *FSCos) MimeType(path string) (string, error) {
+	a.init()
+	path = a.ApplyPathPrefix(path)
+	return a.Adapter().MimeType(path)
 }
 
-func (f *FSCos) Move(source, destination string) (bool, error) {
-	source = f.ApplyPathPrefix(source)
-	destination = f.ApplyPathPrefix(destination)
-	return f.Adapter().Move(source, destination)
+func (a *FSCos) Move(source, destination string) (bool, error) {
+	a.init()
+	source = a.ApplyPathPrefix(source)
+	destination = a.ApplyPathPrefix(destination)
+	return a.Adapter().Move(source, destination)
 }
 
-func (f *FSCos) Copy(source, destination string) (bool, error) {
-	source = f.ApplyPathPrefix(source)
-	destination = f.ApplyPathPrefix(destination)
-	return f.Adapter().Copy(source, destination)
+func (a *FSCos) Copy(source, destination string) (bool, error) {
+	a.init()
+	source = a.ApplyPathPrefix(source)
+	destination = a.ApplyPathPrefix(destination)
+	return a.Adapter().Copy(source, destination)
 }
 
-func (f *FSCos) DiskName() string {
+func (a *FSCos) DiskName() string {
 	return flysystem.DiskNameCOS
 }

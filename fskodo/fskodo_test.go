@@ -5,6 +5,7 @@ import (
 	"github.com/pkg6/go-flysystem/gfs"
 	fskodo2 "github.com/pkg6/go-flysystem/gfs/fskodo"
 	"io"
+	"net/url"
 	"reflect"
 	"testing"
 )
