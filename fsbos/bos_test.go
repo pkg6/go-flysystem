@@ -1,13 +1,14 @@
 package fsbos
 
 import (
-	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/gfs"
-	"github.com/pkg6/go-flysystem/gfs/fsbos"
 	"io"
 	"net/url"
 	"reflect"
 	"testing"
+
+	"github.com/pkg6/go-flysystem"
+	"github.com/zzqqw/gfs"
+	"github.com/zzqqw/gfs/fsbos"
 )
 
 func TestFSBos_Adapter(t *testing.T) {

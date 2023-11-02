@@ -1,13 +1,14 @@
 package local
 
 import (
-	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/gfs"
 	"io"
 	"net/url"
 	"reflect"
 	"sync"
 	"testing"
+
+	"github.com/pkg6/go-flysystem"
+	"github.com/zzqqw/gfs"
 )
 
 func TestLocal_Clone(t *testing.T) {

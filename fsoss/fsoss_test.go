@@ -1,14 +1,15 @@
 package fsoss
 
 import (
-	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/gfs"
-	fsoss2 "github.com/pkg6/go-flysystem/gfs/fsoss"
 	"io"
 	"net/url"
 	"reflect"
 	"sync"
 	"testing"
+
+	"github.com/pkg6/go-flysystem"
+	"github.com/zzqqw/gfs"
+	fsoss2 "github.com/zzqqw/gfs/fsoss"
 )
 
 func TestFsOss_Adapter(t *testing.T) {

@@ -1,14 +1,15 @@
 package fscloudstorage
 
 import (
-	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/gfs"
-	fscloudstorage2 "github.com/pkg6/go-flysystem/gfs/fscloudstorage"
-	"google.golang.org/api/option"
 	"io"
 	"net/url"
 	"sync"
 	"time"
+
+	"github.com/pkg6/go-flysystem"
+	"github.com/zzqqw/gfs"
+	fscloudstorage2 "github.com/zzqqw/gfs/fscloudstorage"
+	"google.golang.org/api/option"
 )
 
 type Config struct {

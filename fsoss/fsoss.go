@@ -1,13 +1,14 @@
 package fsoss
 
 import (
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
-	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/gfs"
-	fsoss2 "github.com/pkg6/go-flysystem/gfs/fsoss"
 	"io"
 	"net/url"
 	"sync"
+
+	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/pkg6/go-flysystem"
+	"github.com/zzqqw/gfs"
+	fsoss2 "github.com/zzqqw/gfs/fsoss"
 )
 
 var (

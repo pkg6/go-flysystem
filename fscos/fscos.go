@@ -1,12 +1,13 @@
 package fscos
 
 import (
-	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/gfs"
-	fscos2 "github.com/pkg6/go-flysystem/gfs/fscos"
 	"io"
 	"net/url"
 	"sync"
+
+	"github.com/pkg6/go-flysystem"
+	"github.com/zzqqw/gfs"
+	fscos2 "github.com/zzqqw/gfs/fscos"
 )
 
 type Config struct {
