@@ -1,13 +1,14 @@
 package fskodo
 
 import (
-	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/gfs"
-	fskodo2 "github.com/pkg6/go-flysystem/gfs/fskodo"
 	"io"
 	"net/url"
 	"reflect"
 	"testing"
+
+	"github.com/pkg6/go-flysystem"
+	"github.com/zzqqw/gfs"
+	fskodo2 "github.com/zzqqw/gfs/fskodo"
 )
 
 func TestFSKodo_Adapter(t *testing.T) {

@@ -1,14 +1,15 @@
 package fscloudstorage
 
 import (
-	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/gfs"
-	fscloudstorage2 "github.com/pkg6/go-flysystem/gfs/fscloudstorage"
 	"io"
 	"net/url"
 	"reflect"
 	"sync"
 	"testing"
+
+	"github.com/pkg6/go-flysystem"
+	"github.com/zzqqw/gfs"
+	fscloudstorage2 "github.com/zzqqw/gfs/fscloudstorage"
 )
 
 func TestFSCloudStorage_Adapter(t *testing.T) {

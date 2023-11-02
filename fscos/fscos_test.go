@@ -1,13 +1,14 @@
 package fscos
 
 import (
-	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/gfs"
-	fscos2 "github.com/pkg6/go-flysystem/gfs/fscos"
 	"io"
 	"net/url"
 	"reflect"
 	"testing"
+
+	"github.com/pkg6/go-flysystem"
+	"github.com/zzqqw/gfs"
+	fscos2 "github.com/zzqqw/gfs/fscos"
 )
 
 func TestFSCos_Adapter(t *testing.T) {

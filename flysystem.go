@@ -2,11 +2,11 @@ package flysystem
 
 import (
 	"fmt"
-	"github.com/pkg6/go-flysystem/gfs"
 	"io"
 	"net/url"
-	"os"
 	"sync"
+
+	"github.com/zzqqw/gfs"
 )
 
 const (
@@ -16,28 +16,10 @@ const (
 	DiskNameBOS                     = gfs.DiskNameBOS
 	DiskNameGoogleCloudCloudStorage = gfs.DiskNameGoogleCloudCloudStorage
 	DiskNameQiNiuKoDo               = gfs.DiskNameQiNiuKoDo
-
-	PathTypeFile      = "file"
-	PathTypeDirectory = "directory"
-	ModePublicString  = "public"
-	ModePrivateString = "private"
-	ModeFilePublic    = 0644
-	ModeFilePrivate   = 0600
-	ModeDirPublic     = 0755
-	ModeDirPrivate    = 0700
 )
 
 var (
-	FileModes = map[string]map[string]os.FileMode{
-		PathTypeFile: {
-			ModePublicString:  ModeFilePublic,
-			ModePrivateString: ModeFilePrivate,
-		},
-		PathTypeDirectory: {
-			ModePublicString:  ModeDirPublic,
-			ModePrivateString: ModeDirPrivate,
-		},
-	}
+	FileModes = gfs.FileModes
 )
 
 type IBFS interface {

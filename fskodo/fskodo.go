@@ -1,13 +1,14 @@
 package fskodo
 
 import (
-	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/gfs"
-	fskodo2 "github.com/pkg6/go-flysystem/gfs/fskodo"
-	"github.com/qiniu/go-sdk/v7/storage"
 	"io"
 	"net/url"
 	"sync"
+
+	"github.com/pkg6/go-flysystem"
+	"github.com/qiniu/go-sdk/v7/storage"
+	"github.com/zzqqw/gfs"
+	fskodo2 "github.com/zzqqw/gfs/fskodo"
 )
 
 type Config struct {

@@ -3,8 +3,6 @@ package local
 import (
 	"errors"
 	"fmt"
-	"github.com/pkg6/go-flysystem"
-	"github.com/pkg6/go-flysystem/gfs"
 	"io"
 	"net/http"
 	"net/url"
@@ -12,6 +10,9 @@ import (
 	"path"
 	"path/filepath"
 	"sync"
+
+	"github.com/pkg6/go-flysystem"
+	"github.com/zzqqw/gfs"
 )
 
 type Local struct {
