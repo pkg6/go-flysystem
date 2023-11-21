@@ -1,45 +1,20 @@
 package fsbos
 
 import (
+	"github.com/pkg6/go-flysystem"
+	"github.com/zzqqw/gfs"
 	"io"
 	"net/url"
 	"reflect"
+	"sync"
 	"testing"
-
-	"github.com/pkg6/go-flysystem"
-	"github.com/zzqqw/gfs"
-	"github.com/zzqqw/gfs/fsbos"
 )
-
-func TestFSBos_Adapter(t *testing.T) {
-	type fields struct {
-		AbstractAdapter gfs.AbstractAdapter
-		Config          *Config
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   *fsbos.Adapter
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			a := &FSBos{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-			}
-			if got := a.Adapter(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Adapter() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
 func TestFSBos_Copy(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		source      string
@@ -59,6 +34,7 @@ func TestFSBos_Copy(t *testing.T) {
 			a := &FSBos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
 			got, err := a.Copy(tt.args.source, tt.args.destination)
 			if (err != nil) != tt.wantErr {
@@ -76,6 +52,7 @@ func TestFSBos_Delete(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -94,6 +71,7 @@ func TestFSBos_Delete(t *testing.T) {
 			a := &FSBos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
 			got, err := a.Delete(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -111,6 +89,7 @@ func TestFSBos_DiskName(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	tests := []struct {
 		name   string
@@ -124,6 +103,7 @@ func TestFSBos_DiskName(t *testing.T) {
 			a := &FSBos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
 			if got := a.DiskName(); got != tt.want {
 				t.Errorf("DiskName() = %v, want %v", got, tt.want)
@@ -136,6 +116,7 @@ func TestFSBos_Exists(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -154,6 +135,7 @@ func TestFSBos_Exists(t *testing.T) {
 			a := &FSBos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
 			got, err := a.Exists(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -167,10 +149,38 @@ func TestFSBos_Exists(t *testing.T) {
 	}
 }
 
+func TestFSBos_GFSAdapter(t *testing.T) {
+	type fields struct {
+		AbstractAdapter gfs.AbstractAdapter
+		Config          *Config
+		lock            *sync.Mutex
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   gfs.IAdapter
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := &FSBos{
+				AbstractAdapter: tt.fields.AbstractAdapter,
+				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
+			}
+			if got := a.GFSAdapter(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GFSAdapter() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestFSBos_MimeType(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -189,6 +199,7 @@ func TestFSBos_MimeType(t *testing.T) {
 			a := &FSBos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
 			got, err := a.MimeType(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -206,6 +217,7 @@ func TestFSBos_Move(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		source      string
@@ -225,6 +237,7 @@ func TestFSBos_Move(t *testing.T) {
 			a := &FSBos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
 			got, err := a.Move(tt.args.source, tt.args.destination)
 			if (err != nil) != tt.wantErr {
@@ -242,6 +255,7 @@ func TestFSBos_Read(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -260,6 +274,7 @@ func TestFSBos_Read(t *testing.T) {
 			a := &FSBos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
 			got, err := a.Read(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -277,6 +292,7 @@ func TestFSBos_Size(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -295,6 +311,7 @@ func TestFSBos_Size(t *testing.T) {
 			a := &FSBos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
 			got, err := a.Size(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -312,6 +329,7 @@ func TestFSBos_URL(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -330,6 +348,7 @@ func TestFSBos_URL(t *testing.T) {
 			a := &FSBos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
 			got, err := a.URL(tt.args.path)
 			if (err != nil) != tt.wantErr {
@@ -347,6 +366,7 @@ func TestFSBos_Update(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -366,6 +386,7 @@ func TestFSBos_Update(t *testing.T) {
 			a := &FSBos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
 			got, err := a.Update(tt.args.path, tt.args.contents)
 			if (err != nil) != tt.wantErr {
@@ -383,6 +404,7 @@ func TestFSBos_UpdateStream(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -402,6 +424,7 @@ func TestFSBos_UpdateStream(t *testing.T) {
 			a := &FSBos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
 			got, err := a.UpdateStream(tt.args.path, tt.args.resource)
 			if (err != nil) != tt.wantErr {
@@ -419,6 +442,7 @@ func TestFSBos_Write(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -438,6 +462,7 @@ func TestFSBos_Write(t *testing.T) {
 			a := &FSBos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
 			got, err := a.Write(tt.args.path, tt.args.contents)
 			if (err != nil) != tt.wantErr {
@@ -455,6 +480,7 @@ func TestFSBos_WriteReader(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path   string
@@ -474,6 +500,7 @@ func TestFSBos_WriteReader(t *testing.T) {
 			a := &FSBos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
 			got, err := a.WriteReader(tt.args.path, tt.args.reader)
 			if (err != nil) != tt.wantErr {
@@ -491,6 +518,7 @@ func TestFSBos_WriteStream(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -510,6 +538,7 @@ func TestFSBos_WriteStream(t *testing.T) {
 			a := &FSBos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
 			got, err := a.WriteStream(tt.args.path, tt.args.resource)
 			if (err != nil) != tt.wantErr {

@@ -1,43 +1,14 @@
 package fscloudstorage
 
 import (
+	"github.com/pkg6/go-flysystem"
+	"github.com/zzqqw/gfs"
 	"io"
 	"net/url"
 	"reflect"
 	"sync"
 	"testing"
-
-	"github.com/pkg6/go-flysystem"
-	"github.com/zzqqw/gfs"
-	fscloudstorage2 "github.com/zzqqw/gfs/fscloudstorage"
 )
-
-func TestFSCloudStorage_Adapter(t *testing.T) {
-	type fields struct {
-		AbstractAdapter gfs.AbstractAdapter
-		Config          *Config
-		lock            *sync.Mutex
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   *fscloudstorage2.Adapter
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			a := &FSCloudStorage{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
-			}
-			if got := a.Adapter(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Adapter() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
 func TestFSCloudStorage_Copy(t *testing.T) {
 	type fields struct {
@@ -173,6 +144,33 @@ func TestFSCloudStorage_Exists(t *testing.T) {
 			}
 			if got != tt.want {
 				t.Errorf("Exists() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFSCloudStorage_GFSAdapter(t *testing.T) {
+	type fields struct {
+		AbstractAdapter gfs.AbstractAdapter
+		Config          *Config
+		lock            *sync.Mutex
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   gfs.IAdapter
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := &FSCloudStorage{
+				AbstractAdapter: tt.fields.AbstractAdapter,
+				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
+			}
+			if got := a.GFSAdapter(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GFSAdapter() = %v, want %v", got, tt.want)
 			}
 		})
 	}

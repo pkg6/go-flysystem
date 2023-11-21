@@ -35,7 +35,7 @@ func (a *FSKodo) init() {
 	a.SetPathPrefix(a.Config.PathPrefix)
 }
 
-func (a *FSKodo) Adapter() *fskodo2.Adapter {
+func (a *FSKodo) GFSAdapter() gfs.IAdapter {
 	return fskodo2.NewKoDo(&fskodo2.Config{
 		CDN:       a.Config.CDN,
 		AccessKey: a.Config.AccessKey,
@@ -45,88 +45,89 @@ func (a *FSKodo) Adapter() *fskodo2.Adapter {
 		Config:    a.Config.Config,
 	})
 }
+
 func (a *FSKodo) URL(path string) (*url.URL, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().URL(path)
+	return a.GFSAdapter().URL(path)
 }
 func (a *FSKodo) Exists(path string) (bool, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().Exist(path)
+	return a.GFSAdapter().Exist(path)
 }
 
 func (a *FSKodo) WriteReader(path string, reader io.Reader) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	err := a.Adapter().WriteReader(path, reader)
+	err := a.GFSAdapter().WriteReader(path, reader)
 	return path, err
 }
 
 func (a *FSKodo) Write(path string, contents []byte) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	err := a.Adapter().Write(path, contents)
+	err := a.GFSAdapter().Write(path, contents)
 	return path, err
 }
 
 func (a *FSKodo) WriteStream(path, resource string) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	err := a.Adapter().WriteStream(path, resource)
+	err := a.GFSAdapter().WriteStream(path, resource)
 	return path, err
 }
 
 func (a *FSKodo) Read(path string) ([]byte, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().Read(path)
+	return a.GFSAdapter().Read(path)
 }
 
 func (a *FSKodo) Delete(path string) (int64, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().Delete(path)
+	return a.GFSAdapter().Delete(path)
 }
 
 func (a *FSKodo) Size(path string) (int64, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().Size(path)
+	return a.GFSAdapter().Size(path)
 }
 
 func (a *FSKodo) Update(path string, contents []byte) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	err := a.Adapter().Update(path, contents)
+	err := a.GFSAdapter().Update(path, contents)
 	return path, err
 }
 
 func (a *FSKodo) UpdateStream(path, resource string) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	err := a.Adapter().UpdateStream(path, resource)
+	err := a.GFSAdapter().UpdateStream(path, resource)
 	return path, err
 }
 
 func (a *FSKodo) MimeType(path string) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().MimeType(path)
+	return a.GFSAdapter().MimeType(path)
 }
 
 func (a *FSKodo) Move(source, destination string) (bool, error) {
 	a.init()
 	source = a.ApplyPathPrefix(source)
 	destination = a.ApplyPathPrefix(destination)
-	return a.Adapter().Move(source, destination)
+	return a.GFSAdapter().Move(source, destination)
 }
 
 func (a *FSKodo) Copy(source, destination string) (bool, error) {
 	a.init()
 	source = a.ApplyPathPrefix(source)
 	destination = a.ApplyPathPrefix(destination)
-	return a.Adapter().Copy(source, destination)
+	return a.GFSAdapter().Copy(source, destination)
 }
 
 func (a *FSKodo) DiskName() string {

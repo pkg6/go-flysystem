@@ -33,7 +33,7 @@ func (a *FSBos) init() {
 	}
 	a.SetPathPrefix(a.Config.PathPrefix)
 }
-func (a *FSBos) Adapter() *fsbos.Adapter {
+func (a *FSBos) GFSAdapter() gfs.IAdapter {
 	return fsbos.NewBOS(&fsbos.Config{
 		CDN:              a.Config.CDN,
 		Ak:               a.Config.Ak,
@@ -46,85 +46,85 @@ func (a *FSBos) Adapter() *fsbos.Adapter {
 func (a *FSBos) URL(path string) (*url.URL, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().URL(path)
+	return a.GFSAdapter().URL(path)
 }
 func (a *FSBos) Exists(path string) (bool, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().Exist(path)
+	return a.GFSAdapter().Exist(path)
 }
 
 func (a *FSBos) WriteReader(path string, reader io.Reader) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	err := a.Adapter().WriteReader(path, reader)
+	err := a.GFSAdapter().WriteReader(path, reader)
 	return path, err
 }
 
 func (a *FSBos) Write(path string, contents []byte) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	err := a.Adapter().Write(path, contents)
+	err := a.GFSAdapter().Write(path, contents)
 	return path, err
 }
 
 func (a *FSBos) WriteStream(path, resource string) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	err := a.Adapter().WriteStream(path, resource)
+	err := a.GFSAdapter().WriteStream(path, resource)
 	return path, err
 }
 
 func (a *FSBos) Read(path string) ([]byte, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().Read(path)
+	return a.GFSAdapter().Read(path)
 }
 
 func (a *FSBos) Delete(path string) (int64, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().Delete(path)
+	return a.GFSAdapter().Delete(path)
 }
 
 func (a *FSBos) Size(path string) (int64, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().Size(path)
+	return a.GFSAdapter().Size(path)
 }
 
 func (a *FSBos) Update(path string, contents []byte) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	err := a.Adapter().Update(path, contents)
+	err := a.GFSAdapter().Update(path, contents)
 	return path, err
 }
 
 func (a *FSBos) UpdateStream(path, resource string) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	err := a.Adapter().UpdateStream(path, resource)
+	err := a.GFSAdapter().UpdateStream(path, resource)
 	return path, err
 }
 
 func (a *FSBos) MimeType(path string) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().MimeType(path)
+	return a.GFSAdapter().MimeType(path)
 }
 
 func (a *FSBos) Move(source, destination string) (bool, error) {
 	a.init()
 	source = a.ApplyPathPrefix(source)
 	destination = a.ApplyPathPrefix(destination)
-	return a.Adapter().Move(source, destination)
+	return a.GFSAdapter().Move(source, destination)
 }
 
 func (a *FSBos) Copy(source, destination string) (bool, error) {
 	a.init()
 	source = a.ApplyPathPrefix(source)
 	destination = a.ApplyPathPrefix(destination)
-	return a.Adapter().Copy(source, destination)
+	return a.GFSAdapter().Copy(source, destination)
 }
 
 func (a *FSBos) DiskName() string {
