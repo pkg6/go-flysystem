@@ -57,13 +57,8 @@ type IAdapter interface {
 	IFS
 	// DiskName Default Disk Name
 	DiskName() string
-}
 
-type IFlysystem interface {
-	IFS
-	Extend(adapter IAdapter, names ...string) IFlysystem
-	Disk(disk string) IFlysystem
-	FindAdapter() IAdapter
+	GFSAdapter() gfs.IAdapter
 }
 
 type Flysystem struct {
@@ -73,14 +68,11 @@ type Flysystem struct {
 	l            *sync.Mutex
 }
 
-func New() IFlysystem {
-	return &Flysystem{
-		diskAdapters: make(map[string]IAdapter),
-		l:            &sync.Mutex{},
-	}
+func New() *Flysystem {
+	return &Flysystem{diskAdapters: make(map[string]IAdapter), l: &sync.Mutex{}}
 }
 
-func NewAdapters(adapters ...IAdapter) IFlysystem {
+func NewAdapters(adapters ...IAdapter) *Flysystem {
 	f := New()
 	for _, adapter := range adapters {
 		f.Extend(adapter)
@@ -89,7 +81,7 @@ func NewAdapters(adapters ...IAdapter) IFlysystem {
 }
 
 // Extend 扩展
-func (f *Flysystem) Extend(adapter IAdapter, names ...string) IFlysystem {
+func (f *Flysystem) Extend(adapter IAdapter, names ...string) *Flysystem {
 	f.l.Lock()
 	defer f.l.Unlock()
 	name := adapter.DiskName()
@@ -101,75 +93,138 @@ func (f *Flysystem) Extend(adapter IAdapter, names ...string) IFlysystem {
 	return f
 }
 
-func (f *Flysystem) Disk(disk string) IFlysystem {
-	return &Flysystem{
-		disk:         disk,
-		diskAdapters: f.diskAdapters,
-		diskNames:    f.diskNames,
-	}
+// DiskGet 获取注册所有的驱动
+func (f *Flysystem) DiskGet() []string {
+	return f.diskNames
 }
 
-// FindAdapter Find Adapter
-func (f *Flysystem) FindAdapter() IAdapter {
-	var disk string
-	if f.disk != "" {
-		disk = f.disk
-	} else if len(f.diskNames) > 0 {
-		disk = f.diskNames[0]
-	}
-	if adapter, ok := f.diskAdapters[disk]; ok {
-		return adapter
-	}
-	panic(fmt.Sprintf("Unable to find %s disk", disk))
+// DiskExist 判断驱动是否存在
+func (f *Flysystem) DiskExist(disk string) bool {
+	_, ok := f.diskAdapters[disk]
+	return ok
 }
+
+// Adapter Find Adapter
+func (f *Flysystem) Adapter(disk string) (IAdapter, error) {
+	if f.disk != "" {
+		f.disk = disk
+	} else if len(f.diskNames) > 0 {
+		f.disk = f.diskNames[0]
+	}
+	if adapter, ok := f.diskAdapters[f.disk]; ok {
+		return adapter, nil
+	}
+	return nil, fmt.Errorf("unable to find %s disk", f.disk)
+}
+
+func (f *Flysystem) GFSAdapter(disk string) (gfs.IAdapter, error) {
+	adapter, err := f.Adapter(disk)
+	if err != nil {
+		return nil, err
+	}
+	return adapter.GFSAdapter(), nil
+}
+
 func (f *Flysystem) URL(path string) (*url.URL, error) {
-	return f.FindAdapter().URL(path)
+	adapter, err := f.Adapter("")
+	if err != nil {
+		return nil, err
+	}
+	return adapter.URL(path)
 }
 
 func (f *Flysystem) Exists(path string) (bool, error) {
-	return f.FindAdapter().Exists(path)
+	adapter, err := f.Adapter("")
+	if err != nil {
+		return false, err
+	}
+	return adapter.Exists(path)
 }
 
 func (f *Flysystem) WriteReader(path string, reader io.Reader) (string, error) {
-	return f.FindAdapter().WriteReader(path, reader)
+	adapter, err := f.Adapter("")
+	if err != nil {
+		return "", err
+	}
+	return adapter.WriteReader(path, reader)
 }
 
 func (f *Flysystem) Write(path string, contents []byte) (string, error) {
-	return f.FindAdapter().Write(path, contents)
+	adapter, err := f.Adapter("")
+	if err != nil {
+		return "", err
+	}
+	return adapter.Write(path, contents)
 }
 
 func (f *Flysystem) WriteStream(path, resource string) (string, error) {
-	return f.FindAdapter().WriteStream(path, resource)
+	adapter, err := f.Adapter("")
+	if err != nil {
+		return "", err
+	}
+	return adapter.WriteStream(path, resource)
 }
 
 func (f *Flysystem) Update(path string, contents []byte) (string, error) {
-	return f.FindAdapter().Update(path, contents)
+	adapter, err := f.Adapter("")
+	if err != nil {
+		return "", err
+	}
+	return adapter.Update(path, contents)
 }
 
 func (f *Flysystem) UpdateStream(path, resource string) (string, error) {
-	return f.FindAdapter().UpdateStream(path, resource)
+	adapter, err := f.Adapter("")
+	if err != nil {
+		return "", err
+	}
+	return adapter.UpdateStream(path, resource)
 }
 
 func (f *Flysystem) Read(path string) ([]byte, error) {
-	return f.FindAdapter().Read(path)
+	adapter, err := f.Adapter("")
+	if err != nil {
+		return nil, err
+	}
+	return adapter.Read(path)
 }
 
 func (f *Flysystem) Delete(path string) (int64, error) {
-	return f.FindAdapter().Delete(path)
+	adapter, err := f.Adapter("")
+	if err != nil {
+		return 0, err
+	}
+	return adapter.Delete(path)
 }
 
 func (f *Flysystem) MimeType(path string) (string, error) {
-	return f.FindAdapter().MimeType(path)
+	adapter, err := f.Adapter("")
+	if err != nil {
+		return "", err
+	}
+	return adapter.MimeType(path)
 }
 
 func (f *Flysystem) Size(path string) (int64, error) {
-	return f.FindAdapter().Size(path)
+	adapter, err := f.Adapter("")
+	if err != nil {
+		return 0, err
+	}
+	return adapter.Size(path)
 }
 
 func (f *Flysystem) Move(source, destination string) (bool, error) {
-	return f.FindAdapter().Move(source, destination)
+	adapter, err := f.Adapter("")
+	if err != nil {
+		return false, err
+	}
+	return adapter.Move(source, destination)
 }
 
 func (f *Flysystem) Copy(source, destination string) (bool, error) {
-	return f.FindAdapter().Copy(source, destination)
+	adapter, err := f.Adapter("")
+	if err != nil {
+		return false, err
+	}
+	return adapter.Copy(source, destination)
 }

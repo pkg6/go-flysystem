@@ -1,45 +1,20 @@
 package fscos
 
 import (
+	"github.com/pkg6/go-flysystem"
+	"github.com/zzqqw/gfs"
 	"io"
 	"net/url"
 	"reflect"
+	"sync"
 	"testing"
-
-	"github.com/pkg6/go-flysystem"
-	"github.com/zzqqw/gfs"
-	fscos2 "github.com/zzqqw/gfs/fscos"
 )
-
-func TestFSCos_Adapter(t *testing.T) {
-	type fields struct {
-		AbstractAdapter gfs.AbstractAdapter
-		Config          *Config
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   *fscos2.Adapter
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCos{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-			}
-			if got := f.Adapter(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Adapter() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
 func TestFSCos_Copy(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		source      string
@@ -56,11 +31,12 @@ func TestFSCos_Copy(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCos{
+			a := &FSCos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.Copy(tt.args.source, tt.args.destination)
+			got, err := a.Copy(tt.args.source, tt.args.destination)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Copy() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -76,6 +52,7 @@ func TestFSCos_Delete(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -91,11 +68,12 @@ func TestFSCos_Delete(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCos{
+			a := &FSCos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.Delete(tt.args.path)
+			got, err := a.Delete(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Delete() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -111,6 +89,7 @@ func TestFSCos_DiskName(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	tests := []struct {
 		name   string
@@ -121,11 +100,12 @@ func TestFSCos_DiskName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCos{
+			a := &FSCos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			if got := f.DiskName(); got != tt.want {
+			if got := a.DiskName(); got != tt.want {
 				t.Errorf("DiskName() = %v, want %v", got, tt.want)
 			}
 		})
@@ -136,6 +116,7 @@ func TestFSCos_Exists(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -151,11 +132,12 @@ func TestFSCos_Exists(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCos{
+			a := &FSCos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.Exists(tt.args.path)
+			got, err := a.Exists(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Exists() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -167,10 +149,38 @@ func TestFSCos_Exists(t *testing.T) {
 	}
 }
 
+func TestFSCos_GFSAdapter(t *testing.T) {
+	type fields struct {
+		AbstractAdapter gfs.AbstractAdapter
+		Config          *Config
+		lock            *sync.Mutex
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   gfs.IAdapter
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := &FSCos{
+				AbstractAdapter: tt.fields.AbstractAdapter,
+				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
+			}
+			if got := a.GFSAdapter(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GFSAdapter() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestFSCos_MimeType(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -186,11 +196,12 @@ func TestFSCos_MimeType(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCos{
+			a := &FSCos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.MimeType(tt.args.path)
+			got, err := a.MimeType(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("MimeType() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -206,6 +217,7 @@ func TestFSCos_Move(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		source      string
@@ -222,11 +234,12 @@ func TestFSCos_Move(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCos{
+			a := &FSCos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.Move(tt.args.source, tt.args.destination)
+			got, err := a.Move(tt.args.source, tt.args.destination)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Move() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -242,6 +255,7 @@ func TestFSCos_Read(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -257,11 +271,12 @@ func TestFSCos_Read(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCos{
+			a := &FSCos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.Read(tt.args.path)
+			got, err := a.Read(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Read() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -277,6 +292,7 @@ func TestFSCos_Size(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -292,11 +308,12 @@ func TestFSCos_Size(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCos{
+			a := &FSCos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.Size(tt.args.path)
+			got, err := a.Size(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Size() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -312,6 +329,7 @@ func TestFSCos_URL(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path string
@@ -327,11 +345,12 @@ func TestFSCos_URL(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCos{
+			a := &FSCos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.URL(tt.args.path)
+			got, err := a.URL(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("URL() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -347,6 +366,7 @@ func TestFSCos_Update(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -363,11 +383,12 @@ func TestFSCos_Update(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCos{
+			a := &FSCos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.Update(tt.args.path, tt.args.contents)
+			got, err := a.Update(tt.args.path, tt.args.contents)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Update() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -383,6 +404,7 @@ func TestFSCos_UpdateStream(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -399,11 +421,12 @@ func TestFSCos_UpdateStream(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCos{
+			a := &FSCos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.UpdateStream(tt.args.path, tt.args.resource)
+			got, err := a.UpdateStream(tt.args.path, tt.args.resource)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UpdateStream() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -419,6 +442,7 @@ func TestFSCos_Write(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -435,11 +459,12 @@ func TestFSCos_Write(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCos{
+			a := &FSCos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.Write(tt.args.path, tt.args.contents)
+			got, err := a.Write(tt.args.path, tt.args.contents)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Write() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -455,6 +480,7 @@ func TestFSCos_WriteReader(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path   string
@@ -471,11 +497,12 @@ func TestFSCos_WriteReader(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCos{
+			a := &FSCos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.WriteReader(tt.args.path, tt.args.reader)
+			got, err := a.WriteReader(tt.args.path, tt.args.reader)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("WriteReader() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -491,6 +518,7 @@ func TestFSCos_WriteStream(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		Config          *Config
+		lock            *sync.Mutex
 	}
 	type args struct {
 		path     string
@@ -507,11 +535,12 @@ func TestFSCos_WriteStream(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FSCos{
+			a := &FSCos{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
 			}
-			got, err := f.WriteStream(tt.args.path, tt.args.resource)
+			got, err := a.WriteStream(tt.args.path, tt.args.resource)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("WriteStream() error = %v, wantErr %v", err, tt.wantErr)
 				return

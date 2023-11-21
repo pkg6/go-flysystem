@@ -36,7 +36,7 @@ func (a *FSCloudStorage) init() {
 	a.SetPathPrefix(a.Config.PathPrefix)
 }
 
-func (a *FSCloudStorage) Adapter() *fscloudstorage2.Adapter {
+func (a *FSCloudStorage) GFSAdapter() gfs.IAdapter {
 	return fscloudstorage2.NewGCS(&fscloudstorage2.Config{
 		CDN:             a.Config.CDN,
 		Bucket:          a.Config.Bucket,
@@ -48,85 +48,85 @@ func (a *FSCloudStorage) Adapter() *fscloudstorage2.Adapter {
 func (a *FSCloudStorage) URL(path string) (*url.URL, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().URL(path)
+	return a.GFSAdapter().URL(path)
 }
 func (a *FSCloudStorage) Exists(path string) (bool, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().Exist(path)
+	return a.GFSAdapter().Exist(path)
 }
 
 func (a *FSCloudStorage) WriteReader(path string, reader io.Reader) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	err := a.Adapter().WriteReader(path, reader)
+	err := a.GFSAdapter().WriteReader(path, reader)
 	return path, err
 }
 
 func (a *FSCloudStorage) Write(path string, contents []byte) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	err := a.Adapter().Write(path, contents)
+	err := a.GFSAdapter().Write(path, contents)
 	return path, err
 }
 
 func (a *FSCloudStorage) WriteStream(path, resource string) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	err := a.Adapter().WriteStream(path, resource)
+	err := a.GFSAdapter().WriteStream(path, resource)
 	return path, err
 }
 
 func (a *FSCloudStorage) Read(path string) ([]byte, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().Read(path)
+	return a.GFSAdapter().Read(path)
 }
 
 func (a *FSCloudStorage) Delete(path string) (int64, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().Delete(path)
+	return a.GFSAdapter().Delete(path)
 }
 
 func (a *FSCloudStorage) Size(path string) (int64, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().Size(path)
+	return a.GFSAdapter().Size(path)
 }
 
 func (a *FSCloudStorage) Update(path string, contents []byte) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	err := a.Adapter().Update(path, contents)
+	err := a.GFSAdapter().Update(path, contents)
 	return path, err
 }
 
 func (a *FSCloudStorage) UpdateStream(path, resource string) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	err := a.Adapter().UpdateStream(path, resource)
+	err := a.GFSAdapter().UpdateStream(path, resource)
 	return path, err
 }
 
 func (a *FSCloudStorage) MimeType(path string) (string, error) {
 	a.init()
 	path = a.ApplyPathPrefix(path)
-	return a.Adapter().MimeType(path)
+	return a.GFSAdapter().MimeType(path)
 }
 
 func (a *FSCloudStorage) Move(source, destination string) (bool, error) {
 	a.init()
 	source = a.ApplyPathPrefix(source)
 	destination = a.ApplyPathPrefix(destination)
-	return a.Adapter().Move(source, destination)
+	return a.GFSAdapter().Move(source, destination)
 }
 
 func (a *FSCloudStorage) Copy(source, destination string) (bool, error) {
 	a.init()
 	source = a.ApplyPathPrefix(source)
 	destination = a.ApplyPathPrefix(destination)
-	return a.Adapter().Copy(source, destination)
+	return a.GFSAdapter().Copy(source, destination)
 }
 
 func (a *FSCloudStorage) DiskName() string {

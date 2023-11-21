@@ -1,11 +1,52 @@
 package flysystem
 
 import (
+	"github.com/zzqqw/gfs"
 	"io"
+	"net/url"
 	"reflect"
 	"sync"
 	"testing"
 )
+
+func TestFlysystem_Adapter(t *testing.T) {
+	type fields struct {
+		disk         string
+		diskAdapters map[string]IAdapter
+		diskNames    []string
+		l            *sync.Mutex
+	}
+	type args struct {
+		disk string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    IAdapter
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f := &Flysystem{
+				disk:         tt.fields.disk,
+				diskAdapters: tt.fields.diskAdapters,
+				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
+			}
+			got, err := f.Adapter(tt.args.disk)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Adapter() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Adapter() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
 func TestFlysystem_Copy(t *testing.T) {
 	type fields struct {
@@ -86,7 +127,7 @@ func TestFlysystem_Delete(t *testing.T) {
 	}
 }
 
-func TestFlysystem_Disk(t *testing.T) {
+func TestFlysystem_DiskExist(t *testing.T) {
 	type fields struct {
 		disk         string
 		diskAdapters map[string]IAdapter
@@ -100,7 +141,7 @@ func TestFlysystem_Disk(t *testing.T) {
 		name   string
 		fields fields
 		args   args
-		want   IFlysystem
+		want   bool
 	}{
 		// TODO: Add test cases.
 	}
@@ -112,8 +153,37 @@ func TestFlysystem_Disk(t *testing.T) {
 				diskNames:    tt.fields.diskNames,
 				l:            tt.fields.l,
 			}
-			if got := f.Disk(tt.args.disk); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Disk() = %v, want %v", got, tt.want)
+			if got := f.DiskExist(tt.args.disk); got != tt.want {
+				t.Errorf("DiskExist() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFlysystem_DiskGet(t *testing.T) {
+	type fields struct {
+		disk         string
+		diskAdapters map[string]IAdapter
+		diskNames    []string
+		l            *sync.Mutex
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   []string
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f := &Flysystem{
+				disk:         tt.fields.disk,
+				diskAdapters: tt.fields.diskAdapters,
+				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
+			}
+			if got := f.DiskGet(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("DiskGet() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -173,7 +243,7 @@ func TestFlysystem_Extend(t *testing.T) {
 		name   string
 		fields fields
 		args   args
-		want   IFlysystem
+		want   *Flysystem
 	}{
 		// TODO: Add test cases.
 	}
@@ -192,17 +262,22 @@ func TestFlysystem_Extend(t *testing.T) {
 	}
 }
 
-func TestFlysystem_FindAdapter(t *testing.T) {
+func TestFlysystem_GFSAdapter(t *testing.T) {
 	type fields struct {
 		disk         string
 		diskAdapters map[string]IAdapter
 		diskNames    []string
 		l            *sync.Mutex
 	}
+	type args struct {
+		disk string
+	}
 	tests := []struct {
-		name   string
-		fields fields
-		want   IAdapter
+		name    string
+		fields  fields
+		args    args
+		want    gfs.IAdapter
+		wantErr bool
 	}{
 		// TODO: Add test cases.
 	}
@@ -214,8 +289,13 @@ func TestFlysystem_FindAdapter(t *testing.T) {
 				diskNames:    tt.fields.diskNames,
 				l:            tt.fields.l,
 			}
-			if got := f.FindAdapter(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FindAdapter() = %v, want %v", got, tt.want)
+			got, err := f.GFSAdapter(tt.args.disk)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GFSAdapter() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GFSAdapter() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -373,6 +453,45 @@ func TestFlysystem_Size(t *testing.T) {
 			}
 			if got != tt.want {
 				t.Errorf("Size() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFlysystem_URL(t *testing.T) {
+	type fields struct {
+		disk         string
+		diskAdapters map[string]IAdapter
+		diskNames    []string
+		l            *sync.Mutex
+	}
+	type args struct {
+		path string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    *url.URL
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f := &Flysystem{
+				disk:         tt.fields.disk,
+				diskAdapters: tt.fields.diskAdapters,
+				diskNames:    tt.fields.diskNames,
+				l:            tt.fields.l,
+			}
+			got, err := f.URL(tt.args.path)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("URL() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("URL() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -581,7 +700,7 @@ func TestFlysystem_WriteStream(t *testing.T) {
 func TestNew(t *testing.T) {
 	tests := []struct {
 		name string
-		want IFlysystem
+		want *Flysystem
 	}{
 		// TODO: Add test cases.
 	}
@@ -601,7 +720,7 @@ func TestNewAdapters(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want IFlysystem
+		want *Flysystem
 	}{
 		// TODO: Add test cases.
 	}

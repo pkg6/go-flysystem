@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.1+incompatible
 	github.com/qiniu/go-sdk/v7 v7.18.2
-	github.com/zzqqw/gfs v0.0.0-20231120041842-b32aac353605
+	github.com/zzqqw/gfs v0.0.0-20231121051543-c7109078f774
 	google.golang.org/api v0.97.0
 )
 

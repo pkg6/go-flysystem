@@ -1,43 +1,14 @@
 package fsoss
 
 import (
+	"github.com/pkg6/go-flysystem"
+	"github.com/zzqqw/gfs"
 	"io"
 	"net/url"
 	"reflect"
 	"sync"
 	"testing"
-
-	"github.com/pkg6/go-flysystem"
-	"github.com/zzqqw/gfs"
-	fsoss2 "github.com/zzqqw/gfs/fsoss"
 )
-
-func TestFsOss_Adapter(t *testing.T) {
-	type fields struct {
-		AbstractAdapter gfs.AbstractAdapter
-		Config          *Config
-		lock            *sync.Mutex
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   *fsoss2.Adapter
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
-			}
-			if got := f.Adapter(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Adapter() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
 func TestFsOss_Copy(t *testing.T) {
 	type fields struct {
@@ -145,43 +116,6 @@ func TestFsOss_Delete(t *testing.T) {
 	}
 }
 
-func TestFsOss_DeleteDirectory(t *testing.T) {
-	type fields struct {
-		AbstractAdapter gfs.AbstractAdapter
-		Config          *Config
-		lock            *sync.Mutex
-	}
-	type args struct {
-		dirname string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    int64
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			f := &FsOss{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				Config:          tt.fields.Config,
-				lock:            tt.fields.lock,
-			}
-			got, err := f.DeleteDirectory(tt.args.dirname)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("DeleteDirectory() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("DeleteDirectory() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestFsOss_DiskName(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
@@ -241,6 +175,33 @@ func TestFsOss_Exists(t *testing.T) {
 			}
 			if got != tt.want {
 				t.Errorf("Exists() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFsOss_GFSAdapter(t *testing.T) {
+	type fields struct {
+		AbstractAdapter gfs.AbstractAdapter
+		Config          *Config
+		lock            *sync.Mutex
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   gfs.IAdapter
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f := &FsOss{
+				AbstractAdapter: tt.fields.AbstractAdapter,
+				Config:          tt.fields.Config,
+				lock:            tt.fields.lock,
+			}
+			if got := f.GFSAdapter(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GFSAdapter() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -404,12 +365,14 @@ func TestFsOss_URL(t *testing.T) {
 	type args struct {
 		path string
 	}
-	var tests []struct {
+	tests := []struct {
 		name    string
 		fields  fields
 		args    args
 		want    *url.URL
 		wantErr bool
+	}{
+		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

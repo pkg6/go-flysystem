@@ -1,42 +1,14 @@
 package local
 
 import (
+	"github.com/pkg6/go-flysystem"
+	"github.com/zzqqw/gfs"
 	"io"
 	"net/url"
 	"reflect"
 	"sync"
 	"testing"
-
-	"github.com/pkg6/go-flysystem"
-	"github.com/zzqqw/gfs"
 )
-
-func TestLocal_Clone(t *testing.T) {
-	type fields struct {
-		AbstractAdapter gfs.AbstractAdapter
-		root            string
-		lock            *sync.Mutex
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   flysystem.IAdapter
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			f := Local{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				root:            tt.fields.root,
-				lock:            tt.fields.lock,
-			}
-			if got := f.Clone(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Clone() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
 func TestLocal_Copy(t *testing.T) {
 	type fields struct {
@@ -76,37 +48,6 @@ func TestLocal_Copy(t *testing.T) {
 	}
 }
 
-func TestLocal_CreateDirectory(t *testing.T) {
-	type fields struct {
-		AbstractAdapter gfs.AbstractAdapter
-		root            string
-		lock            *sync.Mutex
-	}
-	type args struct {
-		dirname string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			f := &Local{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				root:            tt.fields.root,
-				lock:            tt.fields.lock,
-			}
-			if err := f.CreateDirectory(tt.args.dirname); (err != nil) != tt.wantErr {
-				t.Errorf("CreateDirectory() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
 func TestLocal_Delete(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
@@ -139,43 +80,6 @@ func TestLocal_Delete(t *testing.T) {
 			}
 			if got != tt.want {
 				t.Errorf("Delete() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestLocal_DeleteDirectory(t *testing.T) {
-	type fields struct {
-		AbstractAdapter gfs.AbstractAdapter
-		root            string
-		lock            *sync.Mutex
-	}
-	type args struct {
-		dirname string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    int64
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			f := &Local{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				root:            tt.fields.root,
-				lock:            tt.fields.lock,
-			}
-			got, err := f.DeleteDirectory(tt.args.dirname)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("DeleteDirectory() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("DeleteDirectory() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -240,6 +144,33 @@ func TestLocal_Exists(t *testing.T) {
 			}
 			if got != tt.want {
 				t.Errorf("Exists() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestLocal_GFSAdapter(t *testing.T) {
+	type fields struct {
+		AbstractAdapter gfs.AbstractAdapter
+		root            string
+		lock            *sync.Mutex
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   gfs.IAdapter
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f := &Local{
+				AbstractAdapter: tt.fields.AbstractAdapter,
+				root:            tt.fields.root,
+				lock:            tt.fields.lock,
+			}
+			if got := f.GFSAdapter(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GFSAdapter() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -352,44 +283,6 @@ func TestLocal_Read(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Read() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestLocal_SetVisibility(t *testing.T) {
-	type fields struct {
-		AbstractAdapter gfs.AbstractAdapter
-		root            string
-		lock            *sync.Mutex
-	}
-	type args struct {
-		path       string
-		visibility string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    bool
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			f := &Local{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				root:            tt.fields.root,
-				lock:            tt.fields.lock,
-			}
-			got, err := f.SetVisibility(tt.args.path, tt.args.visibility)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("SetVisibility() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("SetVisibility() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -540,37 +433,6 @@ func TestLocal_UpdateStream(t *testing.T) {
 			}
 			if got != tt.want {
 				t.Errorf("UpdateStream() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestLocal_Visibility(t *testing.T) {
-	type fields struct {
-		AbstractAdapter gfs.AbstractAdapter
-		root            string
-		lock            *sync.Mutex
-	}
-	type args struct {
-		path string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			f := &Local{
-				AbstractAdapter: tt.fields.AbstractAdapter,
-				root:            tt.fields.root,
-				lock:            tt.fields.lock,
-			}
-			if err := f.Visibility(tt.args.path); (err != nil) != tt.wantErr {
-				t.Errorf("Visibility() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
@@ -734,7 +596,7 @@ func TestNew(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := New(tt.args.root); !reflect.DeepEqual(got, tt.want) {
+			if got := New(tt.args.root, ""); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("New() = %v, want %v", got, tt.want)
 			}
 		})
