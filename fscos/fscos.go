@@ -1,13 +1,13 @@
 package fscos
 
 import (
+	"github.com/zzqqw/gfs/cosfs"
 	"io"
 	"net/url"
 	"sync"
 
 	"github.com/pkg6/go-flysystem"
 	"github.com/zzqqw/gfs"
-	fscos2 "github.com/zzqqw/gfs/fscos"
 )
 
 type Config struct {
@@ -36,7 +36,7 @@ func (a *FSCos) init() {
 	a.SetPathPrefix(a.Config.PathPrefix)
 }
 func (a *FSCos) GFSAdapter() gfs.IAdapter {
-	return fscos2.NewCOS(&fscos2.Config{
+	return cosfs.NewCOS(&cosfs.Config{
 		CDN:       a.Config.CDN,
 		BucketURL: a.Config.BucketURL,
 		SecretID:  a.Config.SecretID,

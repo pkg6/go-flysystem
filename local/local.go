@@ -2,7 +2,7 @@ package local
 
 import (
 	"fmt"
-	"github.com/zzqqw/gfs/fslocal"
+	"github.com/zzqqw/gfs/localfs"
 	"io"
 	"net/url"
 	"os"
@@ -36,7 +36,7 @@ func (f Local) init() {
 	f.SetPathPrefix(f.root)
 }
 func (f *Local) GFSAdapter() gfs.IAdapter {
-	return fslocal.New(&fslocal.Config{CDN: f.CDN})
+	return localfs.New(&localfs.Config{CDN: f.CDN})
 }
 
 func (f *Local) URL(path string) (*url.URL, error) {

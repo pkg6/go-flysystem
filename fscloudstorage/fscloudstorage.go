@@ -1,6 +1,7 @@
 package fscloudstorage
 
 import (
+	"github.com/zzqqw/gfs/cloudstoragefs"
 	"io"
 	"net/url"
 	"sync"
@@ -8,7 +9,6 @@ import (
 
 	"github.com/pkg6/go-flysystem"
 	"github.com/zzqqw/gfs"
-	fscloudstorage2 "github.com/zzqqw/gfs/fscloudstorage"
 	"google.golang.org/api/option"
 )
 
@@ -37,7 +37,7 @@ func (a *FSCloudStorage) init() {
 }
 
 func (a *FSCloudStorage) GFSAdapter() gfs.IAdapter {
-	return fscloudstorage2.NewGCS(&fscloudstorage2.Config{
+	return cloudstoragefs.NewGCS(&cloudstoragefs.Config{
 		CDN:             a.Config.CDN,
 		Bucket:          a.Config.Bucket,
 		WithTimeout:     a.Config.WithTimeout,

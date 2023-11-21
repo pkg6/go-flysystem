@@ -3,7 +3,7 @@ package fsbos
 import (
 	"github.com/pkg6/go-flysystem"
 	"github.com/zzqqw/gfs"
-	"github.com/zzqqw/gfs/fsbos"
+	"github.com/zzqqw/gfs/bosfs"
 	"io"
 	"net/url"
 	"sync"
@@ -34,7 +34,7 @@ func (a *FSBos) init() {
 	a.SetPathPrefix(a.Config.PathPrefix)
 }
 func (a *FSBos) GFSAdapter() gfs.IAdapter {
-	return fsbos.NewBOS(&fsbos.Config{
+	return bosfs.NewBOS(&bosfs.Config{
 		CDN:              a.Config.CDN,
 		Ak:               a.Config.Ak,
 		Sk:               a.Config.Sk,
