@@ -1,6 +1,7 @@
 package fsoss
 
 import (
+	"github.com/zzqqw/gfs/ossfs"
 	"io"
 	"net/url"
 	"sync"
@@ -8,7 +9,6 @@ import (
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/pkg6/go-flysystem"
 	"github.com/zzqqw/gfs"
-	fsoss2 "github.com/zzqqw/gfs/fsoss"
 )
 
 var (
@@ -46,7 +46,7 @@ func (f *FsOss) init() {
 }
 
 func (f *FsOss) GFSAdapter() gfs.IAdapter {
-	return fsoss2.NewOSS(&fsoss2.Config{
+	return ossfs.NewOSS(&ossfs.Config{
 		CDN:             f.Config.CDN,
 		Bucket:          f.Config.Bucket,
 		Endpoint:        f.Config.Endpoint,

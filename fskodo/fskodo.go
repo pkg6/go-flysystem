@@ -1,6 +1,7 @@
 package fskodo
 
 import (
+	"github.com/zzqqw/gfs/kodofs"
 	"io"
 	"net/url"
 	"sync"
@@ -8,7 +9,6 @@ import (
 	"github.com/pkg6/go-flysystem"
 	"github.com/qiniu/go-sdk/v7/storage"
 	"github.com/zzqqw/gfs"
-	fskodo2 "github.com/zzqqw/gfs/fskodo"
 )
 
 type Config struct {
@@ -36,7 +36,7 @@ func (a *FSKodo) init() {
 }
 
 func (a *FSKodo) GFSAdapter() gfs.IAdapter {
-	return fskodo2.NewKoDo(&fskodo2.Config{
+	return kodofs.NewKoDo(&kodofs.Config{
 		CDN:       a.Config.CDN,
 		AccessKey: a.Config.AccessKey,
 		SecretKey: a.Config.SecretKey,

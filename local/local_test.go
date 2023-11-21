@@ -14,6 +14,7 @@ func TestLocal_Copy(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		root            string
+		CDN             string
 		lock            *sync.Mutex
 	}
 	type args struct {
@@ -34,6 +35,7 @@ func TestLocal_Copy(t *testing.T) {
 			f := &Local{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				root:            tt.fields.root,
+				CDN:             tt.fields.CDN,
 				lock:            tt.fields.lock,
 			}
 			got, err := f.Copy(tt.args.source, tt.args.destination)
@@ -52,6 +54,7 @@ func TestLocal_Delete(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		root            string
+		CDN             string
 		lock            *sync.Mutex
 	}
 	type args struct {
@@ -71,6 +74,7 @@ func TestLocal_Delete(t *testing.T) {
 			f := &Local{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				root:            tt.fields.root,
+				CDN:             tt.fields.CDN,
 				lock:            tt.fields.lock,
 			}
 			got, err := f.Delete(tt.args.path)
@@ -89,6 +93,7 @@ func TestLocal_DiskName(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		root            string
+		CDN             string
 		lock            *sync.Mutex
 	}
 	tests := []struct {
@@ -103,6 +108,7 @@ func TestLocal_DiskName(t *testing.T) {
 			f := Local{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				root:            tt.fields.root,
+				CDN:             tt.fields.CDN,
 				lock:            tt.fields.lock,
 			}
 			if got := f.DiskName(); got != tt.want {
@@ -116,6 +122,7 @@ func TestLocal_Exists(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		root            string
+		CDN             string
 		lock            *sync.Mutex
 	}
 	type args struct {
@@ -135,6 +142,7 @@ func TestLocal_Exists(t *testing.T) {
 			f := &Local{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				root:            tt.fields.root,
+				CDN:             tt.fields.CDN,
 				lock:            tt.fields.lock,
 			}
 			got, err := f.Exists(tt.args.path)
@@ -153,6 +161,7 @@ func TestLocal_GFSAdapter(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		root            string
+		CDN             string
 		lock            *sync.Mutex
 	}
 	tests := []struct {
@@ -167,6 +176,7 @@ func TestLocal_GFSAdapter(t *testing.T) {
 			f := &Local{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				root:            tt.fields.root,
+				CDN:             tt.fields.CDN,
 				lock:            tt.fields.lock,
 			}
 			if got := f.GFSAdapter(); !reflect.DeepEqual(got, tt.want) {
@@ -180,6 +190,7 @@ func TestLocal_MimeType(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		root            string
+		CDN             string
 		lock            *sync.Mutex
 	}
 	type args struct {
@@ -199,6 +210,7 @@ func TestLocal_MimeType(t *testing.T) {
 			f := &Local{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				root:            tt.fields.root,
+				CDN:             tt.fields.CDN,
 				lock:            tt.fields.lock,
 			}
 			got, err := f.MimeType(tt.args.path)
@@ -217,6 +229,7 @@ func TestLocal_Move(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		root            string
+		CDN             string
 		lock            *sync.Mutex
 	}
 	type args struct {
@@ -237,6 +250,7 @@ func TestLocal_Move(t *testing.T) {
 			f := &Local{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				root:            tt.fields.root,
+				CDN:             tt.fields.CDN,
 				lock:            tt.fields.lock,
 			}
 			got, err := f.Move(tt.args.source, tt.args.destination)
@@ -255,6 +269,7 @@ func TestLocal_Read(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		root            string
+		CDN             string
 		lock            *sync.Mutex
 	}
 	type args struct {
@@ -274,6 +289,7 @@ func TestLocal_Read(t *testing.T) {
 			f := &Local{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				root:            tt.fields.root,
+				CDN:             tt.fields.CDN,
 				lock:            tt.fields.lock,
 			}
 			got, err := f.Read(tt.args.path)
@@ -292,6 +308,7 @@ func TestLocal_Size(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		root            string
+		CDN             string
 		lock            *sync.Mutex
 	}
 	type args struct {
@@ -311,6 +328,7 @@ func TestLocal_Size(t *testing.T) {
 			f := &Local{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				root:            tt.fields.root,
+				CDN:             tt.fields.CDN,
 				lock:            tt.fields.lock,
 			}
 			got, err := f.Size(tt.args.path)
@@ -329,6 +347,7 @@ func TestLocal_URL(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		root            string
+		CDN             string
 		lock            *sync.Mutex
 	}
 	type args struct {
@@ -348,6 +367,7 @@ func TestLocal_URL(t *testing.T) {
 			f := &Local{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				root:            tt.fields.root,
+				CDN:             tt.fields.CDN,
 				lock:            tt.fields.lock,
 			}
 			got, err := f.URL(tt.args.path)
@@ -366,6 +386,7 @@ func TestLocal_Update(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		root            string
+		CDN             string
 		lock            *sync.Mutex
 	}
 	type args struct {
@@ -386,6 +407,7 @@ func TestLocal_Update(t *testing.T) {
 			f := &Local{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				root:            tt.fields.root,
+				CDN:             tt.fields.CDN,
 				lock:            tt.fields.lock,
 			}
 			got, err := f.Update(tt.args.path, tt.args.contents)
@@ -404,6 +426,7 @@ func TestLocal_UpdateStream(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		root            string
+		CDN             string
 		lock            *sync.Mutex
 	}
 	type args struct {
@@ -424,6 +447,7 @@ func TestLocal_UpdateStream(t *testing.T) {
 			f := &Local{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				root:            tt.fields.root,
+				CDN:             tt.fields.CDN,
 				lock:            tt.fields.lock,
 			}
 			got, err := f.UpdateStream(tt.args.path, tt.args.resource)
@@ -442,6 +466,7 @@ func TestLocal_Write(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		root            string
+		CDN             string
 		lock            *sync.Mutex
 	}
 	type args struct {
@@ -462,6 +487,7 @@ func TestLocal_Write(t *testing.T) {
 			f := &Local{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				root:            tt.fields.root,
+				CDN:             tt.fields.CDN,
 				lock:            tt.fields.lock,
 			}
 			got, err := f.Write(tt.args.path, tt.args.contents)
@@ -480,6 +506,7 @@ func TestLocal_WriteReader(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		root            string
+		CDN             string
 		lock            *sync.Mutex
 	}
 	type args struct {
@@ -500,6 +527,7 @@ func TestLocal_WriteReader(t *testing.T) {
 			f := &Local{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				root:            tt.fields.root,
+				CDN:             tt.fields.CDN,
 				lock:            tt.fields.lock,
 			}
 			got, err := f.WriteReader(tt.args.path, tt.args.reader)
@@ -518,6 +546,7 @@ func TestLocal_WriteStream(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		root            string
+		CDN             string
 		lock            *sync.Mutex
 	}
 	type args struct {
@@ -538,6 +567,7 @@ func TestLocal_WriteStream(t *testing.T) {
 			f := &Local{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				root:            tt.fields.root,
+				CDN:             tt.fields.CDN,
 				lock:            tt.fields.lock,
 			}
 			got, err := f.WriteStream(tt.args.path, tt.args.resource)
@@ -556,6 +586,7 @@ func TestLocal_ensureDirectory(t *testing.T) {
 	type fields struct {
 		AbstractAdapter gfs.AbstractAdapter
 		root            string
+		CDN             string
 		lock            *sync.Mutex
 	}
 	type args struct {
@@ -574,6 +605,7 @@ func TestLocal_ensureDirectory(t *testing.T) {
 			f := &Local{
 				AbstractAdapter: tt.fields.AbstractAdapter,
 				root:            tt.fields.root,
+				CDN:             tt.fields.CDN,
 				lock:            tt.fields.lock,
 			}
 			if err := f.ensureDirectory(tt.args.root); (err != nil) != tt.wantErr {
@@ -586,6 +618,7 @@ func TestLocal_ensureDirectory(t *testing.T) {
 func TestNew(t *testing.T) {
 	type args struct {
 		root string
+		CDN  string
 	}
 	tests := []struct {
 		name string
@@ -596,7 +629,7 @@ func TestNew(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := New(tt.args.root, ""); !reflect.DeepEqual(got, tt.want) {
+			if got := New(tt.args.root, tt.args.CDN); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("New() = %v, want %v", got, tt.want)
 			}
 		})
