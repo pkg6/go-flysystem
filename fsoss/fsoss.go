@@ -31,18 +31,13 @@ type FsOss struct {
 }
 
 func New(config *Config) flysystem.IAdapter {
-	f := &FsOss{Config: config}
-	return f
-}
+	if config.Endpoint == "" {
+		config.Endpoint = DefaultEndpoint
+	}
 
-func (f *FsOss) init() {
-	if f.Config.Endpoint == "" {
-		f.Config.Endpoint = DefaultEndpoint
-	}
-	if f.lock == nil {
-		f.lock = &sync.Mutex{}
-	}
+	f := &FsOss{Config: config, lock: &sync.Mutex{}}
 	f.SetPathPrefix(f.Config.PathPrefix)
+	return f
 }
 
 func (f *FsOss) GFSAdapter() gfs.IAdapter {
@@ -61,19 +56,17 @@ func (f *FsOss) DiskName() string {
 }
 
 func (f *FsOss) Exists(path string) (bool, error) {
-	f.init()
 	path = f.ApplyPathPrefix(path)
 	return f.GFSAdapter().Exist(path)
 }
 func (f *FsOss) WriteReader(path string, reader io.Reader) (string, error) {
-	f.init()
 	path = f.ApplyPathPrefix(path)
 	err := f.GFSAdapter().WriteReader(path, reader)
 	return path, err
 }
 
 func (f *FsOss) Write(path string, contents []byte) (string, error) {
-	f.init()
+
 	path = f.ApplyPathPrefix(path)
 	err := f.GFSAdapter().Write(path, contents)
 	return path, err
@@ -85,55 +78,55 @@ func (f *FsOss) WriteStream(path, resource string) (string, error) {
 	return path, err
 }
 func (f *FsOss) Update(path string, contents []byte) (string, error) {
-	f.init()
+
 	path = f.ApplyPathPrefix(path)
 	err := f.GFSAdapter().Update(path, contents)
 	return path, err
 }
 func (f *FsOss) URL(path string) (*url.URL, error) {
-	f.init()
+
 	path = f.ApplyPathPrefix(path)
 	return f.GFSAdapter().URL(path)
 }
 
 func (f *FsOss) UpdateStream(path, resource string) (string, error) {
-	f.init()
+
 	path = f.ApplyPathPrefix(path)
 	err := f.GFSAdapter().UpdateStream(path, resource)
 	return path, err
 }
 func (f *FsOss) Read(path string) ([]byte, error) {
-	f.init()
+
 	path = f.ApplyPathPrefix(path)
 	return f.GFSAdapter().Read(path)
 }
 
 func (f *FsOss) Delete(path string) (int64, error) {
-	f.init()
+
 	path = f.ApplyPathPrefix(path)
 	return f.GFSAdapter().Delete(path)
 }
 
 func (f *FsOss) MimeType(path string) (string, error) {
-	f.init()
+
 	path = f.ApplyPathPrefix(path)
 	return f.GFSAdapter().MimeType(path)
 }
 
 func (f *FsOss) Size(path string) (int64, error) {
-	f.init()
+
 	path = f.ApplyPathPrefix(path)
 	return f.GFSAdapter().Size(path)
 }
 func (f *FsOss) Move(source, destination string) (bool, error) {
-	f.init()
+
 	source = f.ApplyPathPrefix(source)
 	destination = f.ApplyPathPrefix(destination)
 	return f.GFSAdapter().Move(source, destination)
 }
 
 func (f *FsOss) Copy(source, destination string) (bool, error) {
-	f.init()
+
 	source = f.ApplyPathPrefix(source)
 	destination = f.ApplyPathPrefix(destination)
 	return f.GFSAdapter().Copy(source, destination)
