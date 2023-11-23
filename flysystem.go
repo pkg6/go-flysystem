@@ -106,15 +106,15 @@ func (f *Flysystem) DiskExist(disk string) bool {
 
 // Adapter Find Adapter
 func (f *Flysystem) Adapter(disk string) (IAdapter, error) {
-	if f.disk != "" {
+	if disk != "" {
 		f.disk = disk
-	} else if len(f.diskNames) > 0 {
+	} else {
 		f.disk = f.diskNames[0]
 	}
 	if adapter, ok := f.diskAdapters[f.disk]; ok {
 		return adapter, nil
 	}
-	return nil, fmt.Errorf("unable to find %s disk", f.disk)
+	return nil, fmt.Errorf("unable to find【%s】disk", f.disk)
 }
 
 func (f *Flysystem) GFSAdapter(disk string) (gfs.IAdapter, error) {

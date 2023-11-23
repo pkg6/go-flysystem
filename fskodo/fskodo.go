@@ -26,13 +26,9 @@ type FSKodo struct {
 }
 
 func New(config *Config) flysystem.IAdapter {
-	return &FSKodo{Config: config}
-}
-func (a *FSKodo) init() {
-	if a.lock == nil {
-		a.lock = &sync.Mutex{}
-	}
+	a := &FSKodo{Config: config, lock: &sync.Mutex{}}
 	a.SetPathPrefix(a.Config.PathPrefix)
+	return a
 }
 
 func (a *FSKodo) GFSAdapter() gfs.IAdapter {
@@ -47,84 +43,71 @@ func (a *FSKodo) GFSAdapter() gfs.IAdapter {
 }
 
 func (a *FSKodo) URL(path string) (*url.URL, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	return a.GFSAdapter().URL(path)
 }
 func (a *FSKodo) Exists(path string) (bool, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	return a.GFSAdapter().Exist(path)
 }
 
 func (a *FSKodo) WriteReader(path string, reader io.Reader) (string, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	err := a.GFSAdapter().WriteReader(path, reader)
 	return path, err
 }
 
 func (a *FSKodo) Write(path string, contents []byte) (string, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	err := a.GFSAdapter().Write(path, contents)
 	return path, err
 }
 
 func (a *FSKodo) WriteStream(path, resource string) (string, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	err := a.GFSAdapter().WriteStream(path, resource)
 	return path, err
 }
 
 func (a *FSKodo) Read(path string) ([]byte, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	return a.GFSAdapter().Read(path)
 }
 
 func (a *FSKodo) Delete(path string) (int64, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	return a.GFSAdapter().Delete(path)
 }
 
 func (a *FSKodo) Size(path string) (int64, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	return a.GFSAdapter().Size(path)
 }
 
 func (a *FSKodo) Update(path string, contents []byte) (string, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	err := a.GFSAdapter().Update(path, contents)
 	return path, err
 }
 
 func (a *FSKodo) UpdateStream(path, resource string) (string, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	err := a.GFSAdapter().UpdateStream(path, resource)
 	return path, err
 }
 
 func (a *FSKodo) MimeType(path string) (string, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	return a.GFSAdapter().MimeType(path)
 }
 
 func (a *FSKodo) Move(source, destination string) (bool, error) {
-	a.init()
 	source = a.ApplyPathPrefix(source)
 	destination = a.ApplyPathPrefix(destination)
 	return a.GFSAdapter().Move(source, destination)
 }
 
 func (a *FSKodo) Copy(source, destination string) (bool, error) {
-	a.init()
 	source = a.ApplyPathPrefix(source)
 	destination = a.ApplyPathPrefix(destination)
 	return a.GFSAdapter().Copy(source, destination)

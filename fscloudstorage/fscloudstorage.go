@@ -27,13 +27,9 @@ type FSCloudStorage struct {
 }
 
 func New(config *Config) flysystem.IAdapter {
-	return &FSCloudStorage{Config: config}
-}
-func (a *FSCloudStorage) init() {
-	if a.lock == nil {
-		a.lock = &sync.Mutex{}
-	}
+	a := &FSCloudStorage{Config: config, lock: &sync.Mutex{}}
 	a.SetPathPrefix(a.Config.PathPrefix)
+	return a
 }
 
 func (a *FSCloudStorage) GFSAdapter() gfs.IAdapter {
@@ -46,84 +42,71 @@ func (a *FSCloudStorage) GFSAdapter() gfs.IAdapter {
 	})
 }
 func (a *FSCloudStorage) URL(path string) (*url.URL, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	return a.GFSAdapter().URL(path)
 }
 func (a *FSCloudStorage) Exists(path string) (bool, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	return a.GFSAdapter().Exist(path)
 }
 
 func (a *FSCloudStorage) WriteReader(path string, reader io.Reader) (string, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	err := a.GFSAdapter().WriteReader(path, reader)
 	return path, err
 }
 
 func (a *FSCloudStorage) Write(path string, contents []byte) (string, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	err := a.GFSAdapter().Write(path, contents)
 	return path, err
 }
 
 func (a *FSCloudStorage) WriteStream(path, resource string) (string, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	err := a.GFSAdapter().WriteStream(path, resource)
 	return path, err
 }
 
 func (a *FSCloudStorage) Read(path string) ([]byte, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	return a.GFSAdapter().Read(path)
 }
 
 func (a *FSCloudStorage) Delete(path string) (int64, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	return a.GFSAdapter().Delete(path)
 }
 
 func (a *FSCloudStorage) Size(path string) (int64, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	return a.GFSAdapter().Size(path)
 }
 
 func (a *FSCloudStorage) Update(path string, contents []byte) (string, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	err := a.GFSAdapter().Update(path, contents)
 	return path, err
 }
 
 func (a *FSCloudStorage) UpdateStream(path, resource string) (string, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	err := a.GFSAdapter().UpdateStream(path, resource)
 	return path, err
 }
 
 func (a *FSCloudStorage) MimeType(path string) (string, error) {
-	a.init()
 	path = a.ApplyPathPrefix(path)
 	return a.GFSAdapter().MimeType(path)
 }
 
 func (a *FSCloudStorage) Move(source, destination string) (bool, error) {
-	a.init()
 	source = a.ApplyPathPrefix(source)
 	destination = a.ApplyPathPrefix(destination)
 	return a.GFSAdapter().Move(source, destination)
 }
 
 func (a *FSCloudStorage) Copy(source, destination string) (bool, error) {
-	a.init()
 	source = a.ApplyPathPrefix(source)
 	destination = a.ApplyPathPrefix(destination)
 	return a.GFSAdapter().Copy(source, destination)
