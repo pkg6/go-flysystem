@@ -9,15 +9,6 @@ import (
 	"sync"
 )
 
-type Config struct {
-	CDN              string
-	Ak               string
-	Sk               string
-	Endpoint         string
-	RedirectDisabled bool
-	Bucket           string
-	PathPrefix       string
-}
 type FSBos struct {
 	gfs.AbstractAdapter
 	Config *Config
@@ -25,6 +16,9 @@ type FSBos struct {
 }
 
 func New(config *Config) flysystem.IAdapter {
+	return NewBOS(config)
+}
+func NewBOS(config *Config) *FSBos {
 	a := &FSBos{Config: config, lock: &sync.Mutex{}}
 	a.SetPathPrefix(a.Config.PathPrefix)
 	return a

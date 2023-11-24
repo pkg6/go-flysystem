@@ -617,8 +617,7 @@ func TestLocal_ensureDirectory(t *testing.T) {
 
 func TestNew(t *testing.T) {
 	type args struct {
-		root string
-		CDN  string
+		config *Config
 	}
 	tests := []struct {
 		name string
@@ -629,8 +628,28 @@ func TestNew(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := New(tt.args.root, tt.args.CDN); !reflect.DeepEqual(got, tt.want) {
+			if got := New(tt.args.config); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("New() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestNewLocal(t *testing.T) {
+	type args struct {
+		config *Config
+	}
+	tests := []struct {
+		name string
+		args args
+		want *Local
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NewLocal(tt.args.config); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewLocal() = %v, want %v", got, tt.want)
 			}
 		})
 	}

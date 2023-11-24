@@ -4,8 +4,7 @@ go 1.18
 
 require (
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.1+incompatible
-	github.com/qiniu/go-sdk/v7 v7.18.2
-	github.com/zzqqw/gfs v0.0.0-20231121053706-0bd4b0b90162
+	github.com/zzqqw/gfs v0.0.0-20231124071049-d4d985d54071
 	google.golang.org/api v0.97.0
 )
 
@@ -25,6 +24,7 @@ require (
 	github.com/googleapis/gax-go/v2 v2.5.1 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/mozillazg/go-httpheader v0.2.1 // indirect
+	github.com/qiniu/go-sdk/v7 v7.18.2 // indirect
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.45 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/net v0.1.0 // indirect
