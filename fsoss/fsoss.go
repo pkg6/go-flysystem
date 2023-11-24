@@ -6,7 +6,6 @@ import (
 	"net/url"
 	"sync"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/pkg6/go-flysystem"
 	"github.com/zzqqw/gfs"
 )
@@ -15,15 +14,6 @@ var (
 	DefaultEndpoint = "oss-cn-hangzhou.aliyuncs.com"
 )
 
-type Config struct {
-	CDN             string
-	Bucket          string
-	Endpoint        string
-	AccessKeyID     string
-	AccessKeySecret string
-	OssConfig       *oss.Config
-	PathPrefix      string
-}
 type FsOss struct {
 	gfs.AbstractAdapter
 	Config *Config
@@ -31,10 +21,12 @@ type FsOss struct {
 }
 
 func New(config *Config) flysystem.IAdapter {
+	return NewOSS(config)
+}
+func NewOSS(config *Config) *FsOss {
 	if config.Endpoint == "" {
 		config.Endpoint = DefaultEndpoint
 	}
-
 	f := &FsOss{Config: config, lock: &sync.Mutex{}}
 	f.SetPathPrefix(f.Config.PathPrefix)
 	return f

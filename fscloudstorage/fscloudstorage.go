@@ -1,25 +1,14 @@
 package fscloudstorage
 
 import (
+	"github.com/pkg6/go-flysystem"
+	"github.com/zzqqw/gfs"
 	"github.com/zzqqw/gfs/cloudstoragefs"
 	"io"
 	"net/url"
 	"sync"
-	"time"
-
-	"github.com/pkg6/go-flysystem"
-	"github.com/zzqqw/gfs"
-	"google.golang.org/api/option"
 )
 
-type Config struct {
-	CDN             string
-	Bucket          string
-	WithTimeout     time.Duration
-	CredentialsFile string
-	Option          []option.ClientOption
-	PathPrefix      string
-}
 type FSCloudStorage struct {
 	gfs.AbstractAdapter
 	Config *Config
@@ -27,6 +16,10 @@ type FSCloudStorage struct {
 }
 
 func New(config *Config) flysystem.IAdapter {
+	return NewCloudStorage(config)
+}
+
+func NewCloudStorage(config *Config) *FSCloudStorage {
 	a := &FSCloudStorage{Config: config, lock: &sync.Mutex{}}
 	a.SetPathPrefix(a.Config.PathPrefix)
 	return a

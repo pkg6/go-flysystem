@@ -7,18 +7,9 @@ import (
 	"sync"
 
 	"github.com/pkg6/go-flysystem"
-	"github.com/qiniu/go-sdk/v7/storage"
 	"github.com/zzqqw/gfs"
 )
 
-type Config struct {
-	CDN                  string
-	AccessKey, SecretKey string
-	Bucket               string
-	Policy               *storage.PutPolicy
-	Config               *storage.Config
-	PathPrefix           string
-}
 type FSKodo struct {
 	gfs.AbstractAdapter
 	Config *Config
@@ -26,6 +17,10 @@ type FSKodo struct {
 }
 
 func New(config *Config) flysystem.IAdapter {
+	return NewKODO(config)
+}
+
+func NewKODO(config *Config) *FSKodo {
 	a := &FSKodo{Config: config, lock: &sync.Mutex{}}
 	a.SetPathPrefix(a.Config.PathPrefix)
 	return a

@@ -19,8 +19,11 @@ type Local struct {
 	lock *sync.Mutex
 }
 
-func New(root, CDN string) flysystem.IAdapter {
-	f := &Local{root: root, CDN: CDN}
+func New(config *Config) flysystem.IAdapter {
+	return NewLocal(config)
+}
+func NewLocal(config *Config) *Local {
+	f := &Local{root: config.root, CDN: config.CDN}
 	err := f.ensureDirectory(f.root)
 	if err != nil {
 		panic(err)
@@ -29,7 +32,6 @@ func New(root, CDN string) flysystem.IAdapter {
 	f.SetPathPrefix(f.root)
 	return f
 }
-
 func (f Local) DiskName() string {
 	return flysystem.DiskNameLocal
 }

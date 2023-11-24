@@ -571,3 +571,23 @@ func TestNew(t *testing.T) {
 		})
 	}
 }
+
+func TestNewCloudStorage(t *testing.T) {
+	type args struct {
+		config *Config
+	}
+	tests := []struct {
+		name string
+		args args
+		want *FSCloudStorage
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NewCloudStorage(tt.args.config); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("NewCloudStorage() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
