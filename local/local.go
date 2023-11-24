@@ -23,7 +23,7 @@ func New(config *Config) flysystem.IAdapter {
 	return NewLocal(config)
 }
 func NewLocal(config *Config) *Local {
-	f := &Local{root: config.root, CDN: config.CDN}
+	f := &Local{root: config.Root, CDN: config.CDN}
 	err := f.ensureDirectory(f.root)
 	if err != nil {
 		panic(err)
