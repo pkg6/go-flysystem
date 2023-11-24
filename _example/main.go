@@ -1,25 +1,3 @@
-# go-flysystem
-
-[![Go Report Card](https://goreportcard.com/badge/github.com/pkg6/go-flysystem)](https://goreportcard.com/report/github.com/pkg6/go-flysystem)
-[![Go.Dev reference](https://img.shields.io/badge/go.dev-reference-blue?logo=go&logoColor=white)](https://pkg.go.dev/github.com/pkg6/go-flysystem?tab=doc)
-[![Sourcegraph](https://sourcegraph.com/github.com/pkg6/go-flysystem/-/badge.svg)](https://sourcegraph.com/github.com/pkg6/go-flysystem?badge)
-[![Release](https://img.shields.io/github/release/pkg6/go-flysystem.svg?style=flat-square)](https://github.com/pkg6/go-flysystem/releases)
-[![Goproxy.cn](https://goproxy.cn/stats/github.com/pkg6/go-flysystem/badges/download-count.svg)](https://goproxy.cn)
-
-
-## About Flysystem
-
-Flysystem is a file storage library for Golang. It provides one interface to interact with many types of filesystems. When you use Flysystem, you're not only protected from vendor lock-in, you'll also have a consistent experience for which ever storage is right for you.
-
-## Install
-
-~~~
-$ go get github.com/pkg6/go-flysystem
-~~~
-
-## example
-
-~~~
 package main
 
 import (
@@ -73,9 +51,3 @@ func main() {
 	_, err = adapters.Copy("2.txt", "5.txt")
 	fmt.Println(err)
 }
-
-~~~
-
-> If Disk is not specified, it will be executed using the first registered driver
-
-You can always [create an adapter](https://github.com/pkg6/go-flysystem/blob/main/adapter.go) yourself.
