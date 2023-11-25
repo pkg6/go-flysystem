@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"reflect"
 	"sync"
 
 	"github.com/zzqqw/gfs"
@@ -16,12 +17,35 @@ type Flysystem struct {
 	l            *sync.Mutex
 }
 
+// FlysystemExtend 通过配置来加载节点
+func FlysystemExtend(fs *Flysystem, c any) {
+	v := reflect.ValueOf(c)
+	t := reflect.TypeOf(c)
+	var disks []string
+	diskConfigs := map[string]IConfig{}
+	for i := 0; i < v.Elem().NumField(); i++ {
+		e := v.Elem().Field(i)
+		if !e.IsZero() {
+			if fsConfig, ok := e.Interface().(IConfig); ok {
+				name := t.Elem().Field(i).Name
+				disks = append(disks, name)
+				diskConfigs[name] = fsConfig
+			}
+		}
+	}
+	for _, disk := range disks {
+		if config, ok := diskConfigs[disk]; ok {
+			fs.Extend(config.New(), disk)
+		}
+	}
+}
+
 func New() *Flysystem {
 	return &Flysystem{diskAdapters: make(map[string]IAdapter), l: &sync.Mutex{}}
 }
 
 func NewAdapters(adapters ...IAdapter) *Flysystem {
-	f := New()
+	f := &Flysystem{diskAdapters: make(map[string]IAdapter), l: &sync.Mutex{}}
 	for _, adapter := range adapters {
 		f.Extend(adapter)
 	}
