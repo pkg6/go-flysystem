@@ -5,7 +5,7 @@ In a certain company, due to the previous integration of OSS direct transmission
 # Method List
 
 ~~~
-BuildToken(exp time.Duration, aud, disk, bucket string) (*TokenResponse, error)
+BuildToken(aud, disk, bucket string) (*TokenResponse, error)
 ParseToken(token string) (*FlysystemClaims, error)
 WithTokenUploadMultipart(fs *flysystem.Flysystem, token, fileName string, file *multipart.FileHeader) error
 WithTokenUploadReader(fs *flysystem.Flysystem, token, fileName string, reader io.Reader) error 
