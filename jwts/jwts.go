@@ -12,14 +12,15 @@ import (
 )
 
 type Jwts struct {
-	Key string
-	Iss string
+	Key        string
+	Iss        string
+	ExpTimeAdd time.Duration
 }
 
-func (j *Jwts) BuildToken(exp time.Duration, aud, disk, bucket string) (*TokenResponse, error) {
+func (j *Jwts) BuildToken(aud, disk, bucket string) (*TokenResponse, error) {
 	resp := new(TokenResponse)
 	t := time.Now().Unix()
-	resp.ExpTime = time.Now().Add(exp).Unix()
+	resp.ExpTime = time.Now().Add(j.ExpTimeAdd).Unix()
 	resp.ExpireIn = resp.ExpTime - t
 	claims := FlysystemClaims{Iss: j.Iss, Iat: t, Exp: resp.ExpTime, Aud: aud, Disk: disk, Bucket: bucket}
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(j.Key))
