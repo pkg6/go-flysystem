@@ -3,23 +3,51 @@ package main
 import (
 	"fmt"
 	"github.com/pkg6/go-flysystem"
+	"github.com/pkg6/go-flysystem/config"
+	"github.com/pkg6/go-flysystem/fsbos"
+	"github.com/pkg6/go-flysystem/fscloudstorage"
+	"github.com/pkg6/go-flysystem/fscos"
+	"github.com/pkg6/go-flysystem/fskodo"
+	"github.com/pkg6/go-flysystem/fsoss"
 	"github.com/pkg6/go-flysystem/local"
+	"github.com/zzqqw/gfs/bosfs"
+	"google.golang.org/api/option"
 	"strings"
 )
 
 func main() {
+	c := config.Config{
+		LOCAL: &local.Config{Root: "./_example/test_data"},
+		OSS:   &fsoss.Config{},
+		BOS: &fsbos.Config{
+			Endpoint: bosfs.DefaultEndpoint,
+			Ak:       "Ak",
+			Sk:       "Sk",
+			Bucket:   "test bucket",
+		},
+		COS: &fscos.Config{
+			BucketURL: "https://bucket-id.cos.ap-beijing.myqcloud.com",
+			SecretID:  "SecretID",
+			SecretKey: "SecretKey",
+		},
+		KODO: &fskodo.Config{
+			AccessKey: "AccessKey",
+			SecretKey: "SecretKey",
+			Bucket:    "test bucket",
+		},
+		CloudStorage: &fscloudstorage.Config{
+			Bucket: "test bucket",
+			Option: []option.ClientOption{
+				option.WithCredentialsFile("CredentialsFile.json"),
+			},
+		},
+	}
 	//Define the root directory of the local adapter
 	root := "./_example/test_data"
-	// Create local adapter
-	localAdapter := local.New(&local.Config{Root: root})
 	//Initialize the adapter
-	adapters := flysystem.NewAdapters(localAdapter)
-	adapters.Extend(local.New(&local.Config{Root: "./_example/test_data/2"}), "local2")
-	var err error
-	_, err = adapters.WriteReader("4.txt", strings.NewReader("test"))
+	adapters, err := flysystem.NewConfig(&c)
 	fmt.Println(err)
-	adapter, err := adapters.Adapter("local2")
-	_, err = adapter.WriteReader("4.txt", strings.NewReader("test"))
+	_, err = adapters.WriteReader("4.txt", strings.NewReader("test"))
 	fmt.Println(err)
 	//Write file
 	_, err = adapters.Write("1.txt", []byte("test data"))

@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/url"
 	"reflect"
+	"strings"
 	"sync"
 
 	"github.com/zzqqw/gfs"
@@ -17,29 +18,11 @@ type Flysystem struct {
 	l            *sync.Mutex
 }
 
-// FlysystemExtend 通过配置来加载节点
-func FlysystemExtend(fs *Flysystem, c any) {
-	v := reflect.ValueOf(c)
-	t := reflect.TypeOf(c)
-	var disks []string
-	diskConfigs := map[string]IConfig{}
-	for i := 0; i < v.Elem().NumField(); i++ {
-		e := v.Elem().Field(i)
-		if !e.IsZero() {
-			if fsConfig, ok := e.Interface().(IConfig); ok {
-				name := t.Elem().Field(i).Name
-				disks = append(disks, name)
-				diskConfigs[name] = fsConfig
-			}
-		}
-	}
-	for _, disk := range disks {
-		if config, ok := diskConfigs[disk]; ok {
-			fs.Extend(config.New(), disk)
-		}
-	}
+func NewConfig(config any) (*Flysystem, error) {
+	fs := &Flysystem{l: &sync.Mutex{}, diskAdapters: make(map[string]IAdapter)}
+	err := fs.ExtendConfigPtr(config)
+	return fs, err
 }
-
 func New() *Flysystem {
 	return &Flysystem{diskAdapters: make(map[string]IAdapter), l: &sync.Mutex{}}
 }
@@ -50,6 +33,35 @@ func NewAdapters(adapters ...IAdapter) *Flysystem {
 		f.Extend(adapter)
 	}
 	return f
+}
+func (f *Flysystem) ExtendConfigPtr(config any) error {
+	v := reflect.ValueOf(config)
+	t := reflect.TypeOf(config)
+	if t.Kind() == reflect.Ptr {
+		for i := 0; i < v.Elem().NumField(); i++ {
+			e := v.Elem().Field(i)
+			if !e.IsZero() {
+				if fsConfig, ok := e.Interface().(IConfig); ok {
+					var diskName string
+					gfsName := t.Elem().Field(i).Tag.Get(gfs.ConfigPtrTag)
+					if gfsName == "" {
+						diskName = t.Elem().Field(i).Name
+					} else {
+						split := strings.Split(gfsName, ",")
+						diskName = split[0]
+						if len(split) > 2 && split[1] == gfs.ConfigPtrSplitTagDefaultDisk {
+							if f.disk == "" {
+								f.disk = diskName
+							}
+						}
+					}
+					f.Extend(fsConfig.New(), diskName)
+				}
+			}
+		}
+		return nil
+	}
+	return fmt.Errorf("the data type is incorrect %v", config)
 }
 
 // Extend 扩展
@@ -65,8 +77,8 @@ func (f *Flysystem) Extend(adapter IAdapter, names ...string) *Flysystem {
 	return f
 }
 
-// DiskGet 获取注册所有的驱动
-func (f *Flysystem) DiskGet() []string {
+// Disks 获取注册所有的驱动
+func (f *Flysystem) Disks() []string {
 	return f.diskNames
 }
 
@@ -75,15 +87,19 @@ func (f *Flysystem) DiskExist(disk string) bool {
 	_, ok := f.diskAdapters[disk]
 	return ok
 }
+func (f *Flysystem) Disk(disk string) string {
+	if disk != "" {
+		f.disk = disk
+	}
+	if f.disk == "" {
+		f.disk = f.diskNames[0]
+	}
+	return f.disk
+}
 
 // Adapter Find Adapter
 func (f *Flysystem) Adapter(disk string) (IAdapter, error) {
-	if disk != "" {
-		f.disk = disk
-	} else {
-		f.disk = f.diskNames[0]
-	}
-	if adapter, ok := f.diskAdapters[f.disk]; ok {
+	if adapter, ok := f.diskAdapters[f.Disk(disk)]; ok {
 		return adapter, nil
 	}
 	return nil, fmt.Errorf("unable to find【%s】disk", f.disk)
