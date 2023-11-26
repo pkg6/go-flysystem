@@ -1,6 +1,5 @@
 .idea
 test_data
-go.sum
 # Binaries for programs and plugins
 *.exe
 *.exe~
