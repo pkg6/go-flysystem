@@ -21,7 +21,7 @@ func TestConfig_New(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := &Config{
-				root: tt.fields.root,
+				Root: tt.fields.root,
 				CDN:  tt.fields.CDN,
 			}
 			if got := c.New(); !reflect.DeepEqual(got, tt.want) {
