@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/golang-jwt/jwt"
+	"github.com/google/uuid"
 	"github.com/pkg6/go-flysystem"
 	"io"
 	"mime/multipart"
@@ -11,18 +12,47 @@ import (
 	"time"
 )
 
+const (
+	defaultSubject = "go-flysystem-token"
+	defaultIssuer  = "go-flysystem"
+)
+
 type Token struct {
-	Key        string
-	Iss        string
-	ExpTimeAdd time.Duration
+	Key       string
+	ExpiresIn time.Duration
+}
+type TokenResponse struct {
+	Token    string  `json:"token" xml:"Token"`
+	ExpTime  int64   `json:"exp_time" xml:"ExpTime"`
+	ExpireIn float64 `json:"expire_in" xml:"ExpireIn"`
+}
+
+type UploadResponse struct {
+	Disk   string `json:"disk" xml:"Disk"`
+	Bucket string `json:"bucket" xml:"Bucket"`
+	Object string `json:"object" xml:"Object"`
+}
+
+type FlysystemClaims struct {
+	jwt.StandardClaims
+	Disk   string `json:"disk"`
+	Bucket string `json:"bucket"`
 }
 
 func (t *Token) BuildToken(aud, disk, bucket string) (*TokenResponse, error) {
 	resp := new(TokenResponse)
-	nowT := time.Now().Unix()
-	resp.ExpTime = time.Now().Add(t.ExpTimeAdd).Unix()
-	resp.ExpireIn = resp.ExpTime - nowT
-	claims := FlysystemClaims{Iss: t.Iss, Iat: nowT, Exp: resp.ExpTime, Aud: aud, Disk: disk, Bucket: bucket}
+	n := time.Now()
+	claims := FlysystemClaims{Disk: disk, Bucket: bucket}
+	claims.Subject = defaultSubject
+	claims.Issuer = defaultIssuer
+	claims.Audience = aud
+	claims.Id = uuid.New().String()
+	claims.IssuedAt = n.Unix()
+	if t.ExpiresIn != time.Duration(0) {
+		resp.ExpTime = n.Add(t.ExpiresIn).Unix()
+		resp.ExpireIn = t.ExpiresIn.Seconds()
+		claims.ExpiresAt = resp.ExpTime
+	}
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(t.Key))
 	if err != nil {
 		return nil, err
@@ -115,4 +145,17 @@ func (t *Token) UploadByte(fs *flysystem.Flysystem, disk, bucket, fileName strin
 		return resp, NewError(http.StatusNoContent, err.Error())
 	}
 	return resp, nil
+}
+
+type FileUploadError struct {
+	Code int
+	Msg  string
+}
+
+func NewError(code int, msg string) *FileUploadError {
+	return &FileUploadError{Code: code, Msg: msg}
+}
+
+func (f *FileUploadError) Error() string {
+	return fmt.Sprintf("code: %d, msg: %s", f.Code, f.Msg)
 }
