@@ -1,7 +1,6 @@
-package jwts
+package token
 
 import (
-	"encoding/base64"
 	"fmt"
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
@@ -17,7 +16,7 @@ const (
 	defaultIssuer  = "go-flysystem"
 )
 
-type Token struct {
+type JWTToken struct {
 	Key       string
 	ExpiresIn time.Duration
 }
@@ -39,7 +38,7 @@ type FlysystemClaims struct {
 	Bucket string `json:"bucket"`
 }
 
-func (t *Token) BuildToken(aud, disk, bucket string) (*TokenResponse, error) {
+func (t *JWTToken) BuildToken(aud, disk, bucket string) (*TokenResponse, error) {
 	resp := new(TokenResponse)
 	n := time.Now()
 	claims := FlysystemClaims{Disk: disk, Bucket: bucket}
@@ -61,7 +60,7 @@ func (t *Token) BuildToken(aud, disk, bucket string) (*TokenResponse, error) {
 	return resp, nil
 }
 
-func (t *Token) ParseToken(token string) (*FlysystemClaims, error) {
+func (t *JWTToken) ParseToken(token string) (*FlysystemClaims, error) {
 	tokenClaims, err := jwt.ParseWithClaims(token, &FlysystemClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(t.Key), nil
 	})
@@ -73,7 +72,7 @@ func (t *Token) ParseToken(token string) (*FlysystemClaims, error) {
 	return nil, err
 }
 
-func (t *Token) withToken(token string) (*FlysystemClaims, error) {
+func (t *JWTToken) withToken(token string) (*FlysystemClaims, error) {
 	if token == "" {
 		return nil, NewError(http.StatusNonAuthoritativeInfo, "Token is empty")
 	}
@@ -84,7 +83,7 @@ func (t *Token) withToken(token string) (*FlysystemClaims, error) {
 	return customClaims, nil
 }
 
-func (t *Token) WithTokenUploadMultipart(fs *flysystem.Flysystem, token, fileName string, file *multipart.FileHeader) (*UploadResponse, error) {
+func (t *JWTToken) WithTokenUploadMultipart(fs *flysystem.Flysystem, token, fileName string, file *multipart.FileHeader) (*UploadResponse, error) {
 	fileOpen, err := file.Open()
 	if err != nil {
 		return nil, NewError(http.StatusLengthRequired, fmt.Sprintf("file.Open() err=%v", err))
@@ -93,7 +92,7 @@ func (t *Token) WithTokenUploadMultipart(fs *flysystem.Flysystem, token, fileNam
 	return t.WithTokenUploadReader(fs, token, fileName, fileOpen)
 }
 
-func (t *Token) WithTokenUploadReader(fs *flysystem.Flysystem, token, fileName string, reader io.Reader) (*UploadResponse, error) {
+func (t *JWTToken) WithTokenUploadReader(fs *flysystem.Flysystem, token, fileName string, reader io.Reader) (*UploadResponse, error) {
 	customClaims, err := t.withToken(token)
 	if err != nil {
 		return nil, err
@@ -101,15 +100,15 @@ func (t *Token) WithTokenUploadReader(fs *flysystem.Flysystem, token, fileName s
 	return t.UploadReader(fs, customClaims.Disk, customClaims.Bucket, fileName, reader)
 }
 
-func (t *Token) WithTokenUploadFilePath(fs *flysystem.Flysystem, token, fileName, filePath string) (*UploadResponse, error) {
-	fileBase64, err := FileBase64(filePath)
+func (t *JWTToken) WithTokenUploadFilePath(fs *flysystem.Flysystem, token, fileName, filePath string) (*UploadResponse, error) {
+	fileBase64, err := flysystem.OpenFileBase64(filePath)
 	if err != nil {
 		return nil, NewError(http.StatusPreconditionFailed, fmt.Sprintf("Base64 parsing failed err=%v", err))
 	}
 	return t.WithTokenUploadBase64(fs, token, fileName, fileBase64)
 }
 
-func (t *Token) WithTokenUploadBase64(fs *flysystem.Flysystem, token, fileName, base64 string) (*UploadResponse, error) {
+func (t *JWTToken) WithTokenUploadBase64(fs *flysystem.Flysystem, token, fileName, base64 string) (*UploadResponse, error) {
 	customClaims, err := t.withToken(token)
 	if err != nil {
 		return nil, err
@@ -117,12 +116,12 @@ func (t *Token) WithTokenUploadBase64(fs *flysystem.Flysystem, token, fileName, 
 	return t.UploadBase64(fs, customClaims.Disk, customClaims.Bucket, fileName, base64)
 }
 
-func (t *Token) UploadBase64(fs *flysystem.Flysystem, disk, bucket, fileName, base64Str string) (*UploadResponse, error) {
-	fileBase64, _ := base64.StdEncoding.DecodeString(base64Str)
+func (t *JWTToken) UploadBase64(fs *flysystem.Flysystem, disk, bucket, fileName, base64Str string) (*UploadResponse, error) {
+	fileBase64, _ := flysystem.DecodeBase64(base64Str)
 	return t.UploadByte(fs, disk, bucket, fileName, fileBase64)
 }
 
-func (t *Token) UploadReader(fs *flysystem.Flysystem, disk, bucket, fileName string, reader io.Reader) (*UploadResponse, error) {
+func (t *JWTToken) UploadReader(fs *flysystem.Flysystem, disk, bucket, fileName string, reader io.Reader) (*UploadResponse, error) {
 	resp := &UploadResponse{Object: fileName, Bucket: bucket, Disk: disk}
 	gfs, err := fs.GFSAdapter(disk)
 	if err != nil {
@@ -134,7 +133,7 @@ func (t *Token) UploadReader(fs *flysystem.Flysystem, disk, bucket, fileName str
 	}
 	return resp, nil
 }
-func (t *Token) UploadByte(fs *flysystem.Flysystem, disk, bucket, fileName string, contents []byte) (*UploadResponse, error) {
+func (t *JWTToken) UploadByte(fs *flysystem.Flysystem, disk, bucket, fileName string, contents []byte) (*UploadResponse, error) {
 	resp := &UploadResponse{Object: fileName, Bucket: bucket, Disk: disk}
 	gfs, err := fs.GFSAdapter(disk)
 	if err != nil {

@@ -5,8 +5,9 @@ go 1.18
 require (
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.1+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/google/uuid v1.3.0
 	github.com/qiniu/go-sdk/v7 v7.18.2
-	github.com/zzqqw/gfs v0.0.0-20231126070722-5c3eb48fcde9
+	github.com/zzqqw/gfs v0.0.0-20231129061738-f24b1acba1ad
 	google.golang.org/api v0.97.0
 )
 
@@ -21,7 +22,6 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.1.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.5.1 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
