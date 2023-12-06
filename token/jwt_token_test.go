@@ -1,4 +1,4 @@
-package jwts
+package token
 
 import (
 	"github.com/golang-jwt/jwt"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestToken(t *testing.T) {
-	token := Token{Key: "go-flysystem", ExpiresIn: 7200 * time.Second}
+	token := JWTToken{Key: "go-flysystem", ExpiresIn: 7200 * time.Second}
 	resp, err := token.BuildToken("go-flysystem", "test", "test-bucket")
 	if err != nil {
 		t.Fatal(err)
@@ -21,7 +21,7 @@ func TestToken(t *testing.T) {
 }
 
 func TestTokenExpTimeAdd(t *testing.T) {
-	token := Token{Key: "go-flysystem", ExpiresIn: 1 * time.Second}
+	token := JWTToken{Key: "go-flysystem", ExpiresIn: 1 * time.Second}
 	resp, err := token.BuildToken("go-flysystem", "test", "test-bucket")
 	if err != nil {
 		t.Fatal(err)
