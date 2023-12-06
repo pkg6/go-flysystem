@@ -1,17 +1,17 @@
 package flysystem
 
 import (
-	"encoding/base64"
+	"github.com/zzqqw/gfs"
 	"io"
 	"os"
 )
 
 func DecodeBase64(s string) ([]byte, error) {
-	return base64.StdEncoding.DecodeString(s)
+	return gfs.DecodeBase64(s)
 }
 
 func EncodeBase64(src []byte) string {
-	return base64.StdEncoding.EncodeToString(src)
+	return gfs.EncodeBase64(src)
 }
 
 // OpenFileBase64 文件路径转base64
