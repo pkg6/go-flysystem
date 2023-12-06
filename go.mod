@@ -7,7 +7,7 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/qiniu/go-sdk/v7 v7.18.2
-	github.com/zzqqw/gfs v0.0.0-20231129061738-f24b1acba1ad
+	github.com/zzqqw/gfs v0.0.0-20231206072718-42352a8c4723
 	google.golang.org/api v0.97.0
 )
 
