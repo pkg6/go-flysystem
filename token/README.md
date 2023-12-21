@@ -7,13 +7,15 @@ In a certain company, due to the previous integration of OSS direct transmission
 ~~~
 BuildToken(aud, disk, bucket string) (*TokenResponse, error)
 ParseToken(token string) (*FlysystemClaims, error)
-WithTokenUploadMultipart(fs *flysystem.Flysystem, token, fileName string, file *multipart.FileHeader) error
-WithTokenUploadReader(fs *flysystem.Flysystem, token, fileName string, reader io.Reader) error 
-WithTokenUploadFilePath(fs *flysystem.Flysystem, token, fileName, filePath string) error
-WithTokenUploadBase64(fs *flysystem.Flysystem, token, fileName, base64 string) error
-UploadReader(fs *flysystem.Flysystem, disk, bucket, fileName string, reader io.Reader) error
-UploadBase64(fs *flysystem.Flysystem, disk, bucket, fileName, base64Str string) error 
-UploadByte(fs *flysystem.Flysystem, disk, bucket, fileName string, contents []byte) error
+WithTokenUploadMultipart(fs *flysystem.Flysystem, token, fileName string, file *multipart.FileHeader) (*Response, error) 
+WithTokenUploadReader(fs *flysystem.Flysystem, token, fileName string, reader io.Reader) (*Response, error)
+WithTokenUploadFilePath(fs *flysystem.Flysystem, token, fileName, filePath string) (*Response, error)
+WithTokenUploadBase64(fs *flysystem.Flysystem, token, fileName, base64 string) (*Response, error)
+WithTokenDelete(fs *flysystem.Flysystem, token, fileName string) (*Response, error)
+Delete(fs *flysystem.Flysystem, disk, bucket, fileName string) (*Response, error) 
+UploadBase64(fs *flysystem.Flysystem, disk, bucket, fileName, base64Str string) (*Response, error)
+UploadReader(fs *flysystem.Flysystem, disk, bucket, fileName string, reader io.Reader) (*Response, error)
+UploadByte(fs *flysystem.Flysystem, disk, bucket, fileName string, contents []byte) (*Response, error) 
 ~~~
 
 # Code message
@@ -26,4 +28,5 @@ UploadByte(fs *flysystem.Flysystem, disk, bucket, fileName string, contents []by
 | 305  | Driver  not found     |
 | 204  | Write error           |
 | 412  | Base64 parsing failed |
+| 404  | gfs.Delete err        |
 
