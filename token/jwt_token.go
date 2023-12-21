@@ -20,23 +20,6 @@ type JWTToken struct {
 	Key       string
 	ExpiresIn time.Duration
 }
-type TokenResponse struct {
-	Token    string  `json:"token" xml:"Token"`
-	ExpTime  int64   `json:"exp_time" xml:"ExpTime"`
-	ExpireIn float64 `json:"expire_in" xml:"ExpireIn"`
-}
-
-type UploadResponse struct {
-	Disk   string `json:"disk" xml:"Disk"`
-	Bucket string `json:"bucket" xml:"Bucket"`
-	Object string `json:"object" xml:"Object"`
-}
-
-type FlysystemClaims struct {
-	jwt.StandardClaims
-	Disk   string `json:"disk"`
-	Bucket string `json:"bucket"`
-}
 
 func (t *JWTToken) BuildToken(aud, disk, bucket string) (*TokenResponse, error) {
 	resp := new(TokenResponse)
@@ -83,7 +66,7 @@ func (t *JWTToken) withToken(token string) (*FlysystemClaims, error) {
 	return customClaims, nil
 }
 
-func (t *JWTToken) WithTokenUploadMultipart(fs *flysystem.Flysystem, token, fileName string, file *multipart.FileHeader) (*UploadResponse, error) {
+func (t *JWTToken) WithTokenUploadMultipart(fs *flysystem.Flysystem, token, fileName string, file *multipart.FileHeader) (*Response, error) {
 	fileOpen, err := file.Open()
 	if err != nil {
 		return nil, NewError(http.StatusLengthRequired, fmt.Sprintf("file.Open() err=%v", err))
@@ -92,7 +75,7 @@ func (t *JWTToken) WithTokenUploadMultipart(fs *flysystem.Flysystem, token, file
 	return t.WithTokenUploadReader(fs, token, fileName, fileOpen)
 }
 
-func (t *JWTToken) WithTokenUploadReader(fs *flysystem.Flysystem, token, fileName string, reader io.Reader) (*UploadResponse, error) {
+func (t *JWTToken) WithTokenUploadReader(fs *flysystem.Flysystem, token, fileName string, reader io.Reader) (*Response, error) {
 	customClaims, err := t.withToken(token)
 	if err != nil {
 		return nil, err
@@ -100,7 +83,7 @@ func (t *JWTToken) WithTokenUploadReader(fs *flysystem.Flysystem, token, fileNam
 	return t.UploadReader(fs, customClaims.Disk, customClaims.Bucket, fileName, reader)
 }
 
-func (t *JWTToken) WithTokenUploadFilePath(fs *flysystem.Flysystem, token, fileName, filePath string) (*UploadResponse, error) {
+func (t *JWTToken) WithTokenUploadFilePath(fs *flysystem.Flysystem, token, fileName, filePath string) (*Response, error) {
 	fileBase64, err := flysystem.OpenFileBase64(filePath)
 	if err != nil {
 		return nil, NewError(http.StatusPreconditionFailed, fmt.Sprintf("Base64 parsing failed err=%v", err))
@@ -108,7 +91,7 @@ func (t *JWTToken) WithTokenUploadFilePath(fs *flysystem.Flysystem, token, fileN
 	return t.WithTokenUploadBase64(fs, token, fileName, fileBase64)
 }
 
-func (t *JWTToken) WithTokenUploadBase64(fs *flysystem.Flysystem, token, fileName, base64 string) (*UploadResponse, error) {
+func (t *JWTToken) WithTokenUploadBase64(fs *flysystem.Flysystem, token, fileName, base64 string) (*Response, error) {
 	customClaims, err := t.withToken(token)
 	if err != nil {
 		return nil, err
@@ -116,13 +99,34 @@ func (t *JWTToken) WithTokenUploadBase64(fs *flysystem.Flysystem, token, fileNam
 	return t.UploadBase64(fs, customClaims.Disk, customClaims.Bucket, fileName, base64)
 }
 
-func (t *JWTToken) UploadBase64(fs *flysystem.Flysystem, disk, bucket, fileName, base64Str string) (*UploadResponse, error) {
+func (t *JWTToken) WithTokenDelete(fs *flysystem.Flysystem, token, fileName string) (*Response, error) {
+	customClaims, err := t.withToken(token)
+	if err != nil {
+		return nil, err
+	}
+	return t.Delete(fs, customClaims.Disk, customClaims.Bucket, fileName)
+}
+
+func (t *JWTToken) Delete(fs *flysystem.Flysystem, disk, bucket, fileName string) (*Response, error) {
+	resp := &Response{Object: fileName, Bucket: bucket, Disk: disk}
+	gfs, err := fs.GFSAdapter(disk)
+	if err != nil {
+		return resp, NewError(http.StatusUseProxy, fmt.Sprintf("GFSAdapter Driver 【%s】 not found", disk))
+	}
+	gfs.Bucket(bucket)
+	if _, err := gfs.Delete(fileName); err != nil {
+		return resp, NewError(http.StatusNotFound, err.Error())
+	}
+	return resp, nil
+}
+
+func (t *JWTToken) UploadBase64(fs *flysystem.Flysystem, disk, bucket, fileName, base64Str string) (*Response, error) {
 	fileBase64, _ := flysystem.DecodeBase64(base64Str)
 	return t.UploadByte(fs, disk, bucket, fileName, fileBase64)
 }
 
-func (t *JWTToken) UploadReader(fs *flysystem.Flysystem, disk, bucket, fileName string, reader io.Reader) (*UploadResponse, error) {
-	resp := &UploadResponse{Object: fileName, Bucket: bucket, Disk: disk}
+func (t *JWTToken) UploadReader(fs *flysystem.Flysystem, disk, bucket, fileName string, reader io.Reader) (*Response, error) {
+	resp := &Response{Object: fileName, Bucket: bucket, Disk: disk}
 	gfs, err := fs.GFSAdapter(disk)
 	if err != nil {
 		return resp, NewError(http.StatusUseProxy, fmt.Sprintf("GFSAdapter Driver 【%s】 not found", disk))
@@ -133,8 +137,8 @@ func (t *JWTToken) UploadReader(fs *flysystem.Flysystem, disk, bucket, fileName 
 	}
 	return resp, nil
 }
-func (t *JWTToken) UploadByte(fs *flysystem.Flysystem, disk, bucket, fileName string, contents []byte) (*UploadResponse, error) {
-	resp := &UploadResponse{Object: fileName, Bucket: bucket, Disk: disk}
+func (t *JWTToken) UploadByte(fs *flysystem.Flysystem, disk, bucket, fileName string, contents []byte) (*Response, error) {
+	resp := &Response{Object: fileName, Bucket: bucket, Disk: disk}
 	gfs, err := fs.GFSAdapter(disk)
 	if err != nil {
 		return resp, NewError(http.StatusUseProxy, fmt.Sprintf("GFSAdapter Driver 【%s】 not found", disk))
@@ -144,17 +148,4 @@ func (t *JWTToken) UploadByte(fs *flysystem.Flysystem, disk, bucket, fileName st
 		return resp, NewError(http.StatusNoContent, err.Error())
 	}
 	return resp, nil
-}
-
-type FileUploadError struct {
-	Code int
-	Msg  string
-}
-
-func NewError(code int, msg string) *FileUploadError {
-	return &FileUploadError{Code: code, Msg: msg}
-}
-
-func (f *FileUploadError) Error() string {
-	return fmt.Sprintf("code: %d, msg: %s", f.Code, f.Msg)
 }

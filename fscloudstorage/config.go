@@ -11,6 +11,7 @@ type Config struct {
 	Bucket          string
 	WithTimeout     time.Duration
 	CredentialsFile string
+	CredentialsJSON string
 	Option          []option.ClientOption
 	PathPrefix      string
 }

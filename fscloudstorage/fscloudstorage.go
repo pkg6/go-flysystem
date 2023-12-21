@@ -31,6 +31,7 @@ func (a *FSCloudStorage) GFSAdapter() gfs.IAdapter {
 		Bucket:          a.Config.Bucket,
 		WithTimeout:     a.Config.WithTimeout,
 		CredentialsFile: a.Config.CredentialsFile,
+		CredentialsJSON: a.Config.CredentialsJSON,
 		Option:          a.Config.Option,
 	})
 }
