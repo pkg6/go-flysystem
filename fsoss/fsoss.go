@@ -1,13 +1,13 @@
 package fsoss
 
 import (
-	"github.com/zzqqw/gfs/ossfs"
+	"github.com/pkg6/gfs/ossfs"
 	"io"
 	"net/url"
 	"sync"
 
 	"github.com/pkg6/go-flysystem"
-	"github.com/zzqqw/gfs"
+	"github.com/pkg6/gfs"
 )
 
 var (

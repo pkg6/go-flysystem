@@ -1,13 +1,13 @@
 package fscos
 
 import (
-	"github.com/zzqqw/gfs/cosfs"
+	"github.com/pkg6/gfs/cosfs"
 	"io"
 	"net/url"
 	"sync"
 
 	"github.com/pkg6/go-flysystem"
-	"github.com/zzqqw/gfs"
+	"github.com/pkg6/gfs"
 )
 
 type FSCos struct {

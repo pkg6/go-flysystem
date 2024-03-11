@@ -9,7 +9,7 @@ import (
 	"github.com/pkg6/go-flysystem/fskodo"
 	"github.com/pkg6/go-flysystem/fsoss"
 	"github.com/pkg6/go-flysystem/local"
-	"github.com/zzqqw/gfs/bosfs"
+	"github.com/pkg6/gfs/bosfs"
 	"google.golang.org/api/option"
 	"testing"
 )

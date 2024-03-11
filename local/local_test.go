@@ -2,7 +2,7 @@ package local
 
 import (
 	"github.com/pkg6/go-flysystem"
-	"github.com/zzqqw/gfs"
+	"github.com/pkg6/gfs"
 	"io"
 	"net/url"
 	"reflect"
