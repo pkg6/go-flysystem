@@ -2,8 +2,8 @@ package fscloudstorage
 
 import (
 	"github.com/pkg6/go-flysystem"
-	"github.com/zzqqw/gfs"
-	"github.com/zzqqw/gfs/cloudstoragefs"
+	"github.com/pkg6/gfs"
+	"github.com/pkg6/gfs/cloudstoragefs"
 	"io"
 	"net/url"
 	"sync"

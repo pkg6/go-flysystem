@@ -2,8 +2,8 @@ package fsbos
 
 import (
 	"github.com/pkg6/go-flysystem"
-	"github.com/zzqqw/gfs"
-	"github.com/zzqqw/gfs/bosfs"
+	"github.com/pkg6/gfs"
+	"github.com/pkg6/gfs/bosfs"
 	"io"
 	"net/url"
 	"sync"

@@ -1,7 +1,7 @@
 package flysystem
 
 import (
-	"github.com/zzqqw/gfs"
+	"github.com/pkg6/gfs"
 	"io"
 	"os"
 )
