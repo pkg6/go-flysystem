@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/zzqqw/gfs"
+	"github.com/pkg6/gfs"
 )
 
 type Flysystem struct {

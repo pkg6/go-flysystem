@@ -2,14 +2,14 @@ package local
 
 import (
 	"fmt"
-	"github.com/zzqqw/gfs/localfs"
+	"github.com/pkg6/gfs/localfs"
 	"io"
 	"net/url"
 	"os"
 	"sync"
 
 	"github.com/pkg6/go-flysystem"
-	"github.com/zzqqw/gfs"
+	"github.com/pkg6/gfs"
 )
 
 type Local struct {
