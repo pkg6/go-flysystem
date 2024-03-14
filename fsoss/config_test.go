@@ -14,7 +14,7 @@ func TestConfig_New(t *testing.T) {
 		Endpoint        string
 		AccessKeyID     string
 		AccessKeySecret string
-		OssConfig       *oss.Config
+		Config          *oss.Config
 		PathPrefix      string
 	}
 	tests := []struct {
@@ -32,7 +32,7 @@ func TestConfig_New(t *testing.T) {
 				Endpoint:        tt.fields.Endpoint,
 				AccessKeyID:     tt.fields.AccessKeyID,
 				AccessKeySecret: tt.fields.AccessKeySecret,
-				OssConfig:       tt.fields.OssConfig,
+				Config:          tt.fields.Config,
 				PathPrefix:      tt.fields.PathPrefix,
 			}
 			if got := c.New(); !reflect.DeepEqual(got, tt.want) {
