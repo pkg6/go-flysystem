@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"sync"
 
-	"github.com/pkg6/go-flysystem"
 	"github.com/pkg6/gfs"
+	"github.com/pkg6/go-flysystem"
 )
 
 var (
@@ -39,7 +39,7 @@ func (f *FsOss) GFSAdapter() gfs.IAdapter {
 		Endpoint:        f.Config.Endpoint,
 		AccessKeyID:     f.Config.AccessKeyID,
 		AccessKeySecret: f.Config.AccessKeySecret,
-		OssConfig:       f.Config.OssConfig,
+		OssConfig:       f.Config.Config,
 	})
 }
 
