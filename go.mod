@@ -6,7 +6,7 @@ require (
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.1+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.3.0
-	github.com/pkg6/gfs v0.1.0
+	github.com/pkg6/gfs v0.1.1
 	github.com/qiniu/go-sdk/v7 v7.18.2
 	google.golang.org/api v0.97.0
 )

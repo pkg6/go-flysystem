@@ -39,7 +39,7 @@ func (f *FsOss) GFSAdapter() gfs.IAdapter {
 		Endpoint:        f.Config.Endpoint,
 		AccessKeyID:     f.Config.AccessKeyID,
 		AccessKeySecret: f.Config.AccessKeySecret,
-		OssConfig:       f.Config.Config,
+		Config:          f.Config.Config,
 	})
 }
 
