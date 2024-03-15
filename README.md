@@ -73,9 +73,8 @@ func main() {
 	_, err = adapters.Copy("2.txt", "5.txt")
 	fmt.Println(err)
 }
-
 ~~~
 
-> If Disk is not specified, it will be executed using the first registered driver
+## Associated Projects
 
-You can always [create an adapter](https://github.com/pkg6/go-flysystem/blob/main/adapter.go) yourself.
+gfs： [github.com/pkg6/gfs](https://github.com/pkg6/gfs)
