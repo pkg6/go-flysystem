@@ -7,11 +7,11 @@ import (
 )
 
 func DecodeBase64(s string) ([]byte, error) {
-	return gfs.DecodeBase64(s)
+	return gfs.Base64Decode(s)
 }
 
 func EncodeBase64(src []byte) string {
-	return gfs.EncodeBase64(src)
+	return gfs.Base64Encode(src)
 }
 
 // OpenFileBase64 文件路径转base64
